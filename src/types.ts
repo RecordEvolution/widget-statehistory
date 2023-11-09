@@ -9,12 +9,14 @@ export interface Settings {
     timeseries: boolean
     xAxisLabel: string
     yAxisLabel: string
+    columnLayout: boolean
 }
 
 export interface Dataseries {
     label: string
     order: number
     type: string
+    chartName: string
     showLine: boolean
     radius: number
     pointStyle: string

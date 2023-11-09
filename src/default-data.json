@@ -4,7 +4,8 @@
         "subTitle": "This is a Sub title",
         "timeseries": true,
         "xAxisLabel": "Time",
-        "yAxisLabel": "Temperature"
+        "yAxisLabel": "Temperature",
+        "columnLayout": false
     },
     "dataseries": [{
         "label": "Demo Bar",
@@ -41,6 +42,7 @@
         "label": "Demo Line",
         "type": "line",
         "order": 2,
+        "chartName": "ddd#pivot#",
         "showLine": true,
         "radius": 7,
         "pointStyle": "rectRounded",

@@ -1,4 +1,5 @@
 import { html, css, LitElement } from 'lit';
+import { repeat } from 'lit/directives/repeat.js'
 import { property, state } from 'lit/decorators.js';
 import Chart, { ChartDataset } from 'chart.js/auto';
 // @ts-ignore
@@ -22,7 +23,7 @@ export class WidgetLinechart extends LitElement {
   private lineDescription: string = 'This is a Line-chart';
 
   @state()
-  private dataSets: Dataseries[] = []
+  private canvasList: Map<string, {chart?: any, dataSets: Dataseries[]}> = new Map()
 
   updated(changedProperties: Map<string, any>) {
     changedProperties.forEach((oldValue, propName) => {
@@ -39,8 +40,10 @@ export class WidgetLinechart extends LitElement {
 
     this.lineTitle = this.inputData.settings.title ?? this.lineTitle
     this.lineDescription = this.inputData.settings.subTitle ?? this.lineDescription
-    this.dataSets = []
+    // reset all existing chart dataseries
+    this.canvasList.forEach(chartM => chartM.dataSets = [])
     this.inputData.dataseries.forEach(ds => {
+      ds.chartName = ds.chartName ?? ''
       if (ds.borderDash) ds.borderDash = JSON.parse(ds.borderDash)
 
       // pivot data
@@ -64,24 +67,37 @@ export class WidgetLinechart extends LitElement {
             fill: ds.fill,
             data: ds.data.filter(d => d.pivot === piv)
           }
-          this.dataSets.push(pds)
+          // If the chartName ends with :pivot: then create a seperate chart for each pivoted dataseries
+          const chartName = ds.chartName.endsWith('#pivot#') ? ds.chartName + piv : ds.chartName
+          if (!this.canvasList.has(chartName)) {
+            // initialize new charts
+            this.canvasList.set(chartName, {chart: undefined, dataSets: [] as Dataseries[]})
+          }
+          this.canvasList.get(chartName)?.dataSets.push(pds)
         })
       } else {
-        this.dataSets.push(ds)
+          if (!this.canvasList.has(ds.chartName)) {
+            // initialize new charts
+            this.canvasList.set(ds.chartName, {chart: undefined, dataSets: [] as Dataseries[]})
+          }
+          this.canvasList.get(ds.chartName)?.dataSets.push(ds)
       }
-
     })
-    // console.log('linechart datasets', this.dataSets)
-    // update chart info
-    if (this.chartInstance) {
-      // @ts-ignore
-      this.chartInstance.data.datasets = this.dataSets
-      // @ts-ignore
-      this.chartInstance.options.scales.x.type = this.xAxisType()
-      this.chartInstance.update('resize')
-    } else {
-      this.createChart()
-    }
+
+    // console.log('new linechart datasets', this.canvasList)
+
+    this.canvasList.forEach(({chart, dataSets}) => {
+      if (chart) {
+        // @ts-ignore
+        chart.data.datasets = dataSets
+        // @ts-ignore
+        chart.options.scales.x.type = this.xAxisType()
+        chart?.update('resize')
+      } else {
+        this.createChart()
+      }
+    })
+    
   }
 
 
@@ -94,16 +110,17 @@ export class WidgetLinechart extends LitElement {
   }
 
   createChart() {
-    const canvas = this.shadowRoot?.querySelector('#lineChart') as HTMLCanvasElement;
-		if(!canvas ) return
-      // @ts-ignore
-      this.chartInstance = new Chart(
+    this.canvasList.forEach((chartM, chartName) => {
+      const canvas = this.shadowRoot?.querySelector(`[name="${chartName}"]`) as HTMLCanvasElement
+      if (!canvas) return
+      // console.log('chartM', canvas, chartM.chart)
+      chartM.chart = new Chart(
         canvas,
         {
           type: 'line',
           data: {
-      // @ts-ignore
-            datasets: this.dataSets
+            // @ts-ignore
+            datasets: chartM.dataSets
           },
           options: {
             responsive: true,
@@ -136,7 +153,8 @@ export class WidgetLinechart extends LitElement {
             },
           },
         }
-      );
+      )
+    })
   }
 
   static styles = css`
@@ -149,6 +167,10 @@ export class WidgetLinechart extends LitElement {
     margin: auto;
   }
 
+  .columnLayout {
+    flex-direction: column;
+  }
+
   .wrapper {
     display: flex;
     flex-direction: column;
@@ -156,7 +178,14 @@ export class WidgetLinechart extends LitElement {
     width: 100%;
   }
 
-  #sizer {
+  .chart-container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+  .sizer {
     flex: 1;
     overflow: hidden;
     position: relative;
@@ -189,8 +218,13 @@ export class WidgetLinechart extends LitElement {
           <h3>${this.lineTitle}</h3>
           <p>${this.lineDescription}</p>
         </header>
-        <div id="sizer">
-          <canvas id="lineChart"></canvas>
+
+        <div class="chart-container ${this?.inputData?.settings.columnLayout ? 'columnLayout': ''}">
+          ${repeat(this.canvasList, ([chartName, chartM]) => chartName, ([chartName]) => html`
+            <div class="sizer">
+              <canvas name="${chartName}"></canvas>
+            </div>
+          `)}
         </div>
       </div>
     `;

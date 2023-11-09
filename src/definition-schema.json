@@ -26,6 +26,11 @@
                 "yAxisLabel": {
                     "title": "Y-Axis Label",
                     "type": "string"
+                },
+                "columnLayout": {
+                    "Title": "Vertical Layout",
+                    "description": "When multiple charts are drawn, then they will be layed out horizontically or vertically.",
+                    "type": "boolean"
                 }
             },
             "required": []
@@ -45,6 +50,11 @@
                         "title": "Draw Order",
                         "description": "Determines the draw order of the series. Dataseries with lower numbers are drawn on top of ones with higher numbers.",
                         "type": "number"
+                    },
+                    "chartName": {
+                        "title": "Chart",
+                        "description": "If two dataseries have the same 'Chart' name, they will be drawn in the same chart. Otherwise they will get their own chart. If the name ends with #pivot# then a separat chart will be drawn for each pivoted dataseries.",
+                        "type": "string"
                     },
                     "type": {
                         "title": "Drawing Type",
