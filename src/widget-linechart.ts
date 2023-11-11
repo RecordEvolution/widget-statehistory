@@ -16,8 +16,6 @@ export class WidgetLinechart extends LitElement {
   inputData = {} as InputData
 
   @state()
-  private chartInstance: Chart | undefined = undefined;
-  @state()
   private lineTitle: string = 'Line-chart';
   @state()
   private lineDescription: string = 'This is a Line-chart';
@@ -25,16 +23,19 @@ export class WidgetLinechart extends LitElement {
   @state()
   private canvasList: Map<string, {chart?: any, dataSets: Dataseries[]}> = new Map()
 
-  updated(changedProperties: Map<string, any>) {
-    changedProperties.forEach((oldValue, propName) => {
-      if (propName === 'inputData') {
-        this.applyInputData()
-        return
-      }
-    })
+  update(changedProperties: Map<string, any>) {
+    if (changedProperties.has('inputData')) {
+      this.transformInputData()
+      this.applyInputData()
+    }
+    super.update(changedProperties)
   }
 
-  applyInputData() {
+  protected firstUpdated(): void {
+    this.applyInputData()
+  }
+
+  transformInputData() {
 
     if(!this?.inputData?.settings?.title || !this?.inputData?.dataseries.length) return
 
@@ -44,7 +45,7 @@ export class WidgetLinechart extends LitElement {
     this.canvasList.forEach(chartM => chartM.dataSets = [])
     this.inputData.dataseries.forEach(ds => {
       ds.chartName = ds.chartName ?? ''
-      if (ds.borderDash) ds.borderDash = JSON.parse(ds.borderDash)
+      if (ds.borderDash && typeof ds.borderDash === 'string') ds.borderDash = JSON.parse(ds.borderDash)
 
       // pivot data
       const distincts = [...new Set(ds.data.map((d: Data) => d.pivot))]
@@ -83,23 +84,22 @@ export class WidgetLinechart extends LitElement {
           this.canvasList.get(ds.chartName)?.dataSets.push(ds)
       }
     })
-
+    // prevent duplicate transformation
+    this.inputData.dataseries = []
     // console.log('new linechart datasets', this.canvasList)
+  }
 
+  applyInputData() {
     this.canvasList.forEach(({chart, dataSets}) => {
       if (chart) {
-        // @ts-ignore
         chart.data.datasets = dataSets
-        // @ts-ignore
         chart.options.scales.x.type = this.xAxisType()
         chart?.update('resize')
       } else {
         this.createChart()
       }
     })
-    
   }
-
 
   xAxisType() {
     if (this.inputData.settings.timeseries) return 'time'
