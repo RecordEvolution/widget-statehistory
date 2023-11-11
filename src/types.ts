@@ -4,8 +4,8 @@ export interface InputData {
     dataseries: Dataseries[]
 }
 export interface Settings {
-    title: string,
-    subTitle: string,
+    title: string
+    subTitle: string
     timeseries: boolean
     xAxisLabel: string
     yAxisLabel: string
@@ -29,7 +29,8 @@ export interface Dataseries {
 }
 
 export interface Data {
-    x: string,
-    y: number,
+    x: string
+    y: number
+    r: number
     pivot: string
 }

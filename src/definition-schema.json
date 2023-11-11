@@ -58,7 +58,7 @@
                     },
                     "type": {
                         "title": "Drawing Type",
-                        "description": "Can be one of 'bar', 'line'.",
+                        "description": "Can be one of 'bar', 'line', 'bubble'.",
                         "type": "string"
                     },
                     "showLine": {
@@ -116,6 +116,11 @@
                                     "type": "string"
                                 },
                                 "y": {
+                                    "type": "number"
+                                },
+                                "r": {
+                                    "title": "Point Radius",
+                                    "description": "Valid only for Bubble Chart type.",
                                     "type": "number"
                                 },
                                 "pivot": {
