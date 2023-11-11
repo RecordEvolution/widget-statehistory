@@ -16,11 +16,6 @@ export class WidgetLinechart extends LitElement {
   inputData = {} as InputData
 
   @state()
-  private lineTitle: string = 'Line-chart';
-  @state()
-  private lineDescription: string = 'This is a Line-chart';
-
-  @state()
   private canvasList: Map<string, {chart?: any, dataSets: Dataseries[]}> = new Map()
 
   update(changedProperties: Map<string, any>) {
@@ -39,8 +34,6 @@ export class WidgetLinechart extends LitElement {
 
     if(!this?.inputData?.settings?.title || !this?.inputData?.dataseries.length) return
 
-    this.lineTitle = this.inputData.settings.title ?? this.lineTitle
-    this.lineDescription = this.inputData.settings.subTitle ?? this.lineDescription
     // reset all existing chart dataseries
     this.canvasList.forEach(chartM => chartM.dataSets = [])
     this.inputData.dataseries.forEach(ds => {
@@ -215,8 +208,8 @@ export class WidgetLinechart extends LitElement {
     return html`
       <div class="wrapper">
         <header>
-          <h3>${this.lineTitle}</h3>
-          <p>${this.lineDescription}</p>
+          <h3>${this?.inputData?.settings?.title}</h3>
+          <p>${this?.inputData?.settings?.subTitle}</p>
         </header>
 
         <div class="chart-container ${this?.inputData?.settings.columnLayout ? 'columnLayout': ''}">
