@@ -160,6 +160,8 @@ export class WidgetLinechart extends LitElement {
     margin: auto;
   }
 
+  .paging:not([active]) { display: none !important; }
+
   .columnLayout {
     flex-direction: column;
   }
@@ -208,8 +210,8 @@ export class WidgetLinechart extends LitElement {
     return html`
       <div class="wrapper">
         <header>
-          <h3>${this?.inputData?.settings?.title}</h3>
-          <p>${this?.inputData?.settings?.subTitle}</p>
+          <h3 class="paging" ?active=${this.inputData?.settings?.title}>${this.inputData?.settings?.title}</h3>
+          <p class="paging" ?active=${this.inputData?.settings?.subTitle}>${this.inputData?.settings?.subTitle}</p>
         </header>
 
         <div class="chart-container ${this?.inputData?.settings.columnLayout ? 'columnLayout': ''}">
