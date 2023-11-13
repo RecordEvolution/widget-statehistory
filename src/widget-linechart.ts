@@ -95,7 +95,7 @@ export class WidgetLinechart extends LitElement {
   }
 
   xAxisType() {
-    if (this.inputData.settings.timeseries) return 'time'
+    if (this.inputData?.settings?.timeseries) return 'time'
     const onePoint = this.inputData.dataseries?.[0].data?.[0]
     // @ts-ignore
     if (onePoint && !isNaN(onePoint.x)) return 'linear'
@@ -133,14 +133,14 @@ export class WidgetLinechart extends LitElement {
               x: {
                 type: this.xAxisType(),
                 title: {
-                  display: !!this.inputData.settings.xAxisLabel,
-                  text: this.inputData.settings.xAxisLabel
+                  display: !!this.inputData?.settings?.xAxisLabel,
+                  text: this.inputData?.settings?.xAxisLabel
                 }
               },
               y: {
                 title: {
-                  display: !!this.inputData.settings.yAxisLabel,
-                  text: this.inputData.settings.yAxisLabel
+                  display: !!this.inputData?.settings?.yAxisLabel,
+                  text: this.inputData?.settings?.yAxisLabel
                 }
               }
             },
@@ -214,7 +214,7 @@ export class WidgetLinechart extends LitElement {
           <p class="paging" ?active=${this.inputData?.settings?.subTitle}>${this.inputData?.settings?.subTitle}</p>
         </header>
 
-        <div class="chart-container ${this?.inputData?.settings.columnLayout ? 'columnLayout': ''}">
+        <div class="chart-container ${this?.inputData?.settings?.columnLayout ? 'columnLayout': ''}">
           ${repeat(this.canvasList, ([chartName, chartM]) => chartName, ([chartName]) => html`
             <div class="sizer">
               <canvas name="${chartName}"></canvas>
