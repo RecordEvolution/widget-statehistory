@@ -53,12 +53,12 @@
                     },
                     "chartName": {
                         "title": "Chart",
-                        "description": "If two dataseries have the same 'Chart' name, they will be drawn in the same chart. Otherwise they will get their own chart. If the name ends with #pivot# then a separat chart will be drawn for each pivoted dataseries.",
+                        "description": "If two dataseries have the same ''Chart'' name, they will be drawn in the same chart. Otherwise they will get their own chart. If the name ends with #pivot# then a separat chart will be drawn for each pivoted dataseries.",
                         "type": "string"
                     },
                     "type": {
                         "title": "Drawing Type",
-                        "description": "Can be one of 'bar', 'line', 'bubble'.",
+                        "description": "Can be one of ''bar'', ''line'', ''bubble''.",
                         "type": "string"
                     },
                     "showLine": {
@@ -75,22 +75,22 @@
                     },
                     "pointStyle": {
                         "title": "Point Style",
-                        "description": "Can be one of 'circle', 'cross', 'crossRot', 'dash', 'line', 'rect', 'rectRounded', 'rectRot', 'star', 'triangle'.",
+                        "description": "Can be one of ''circle'', ''cross'', ''crossRot'', ''dash'', ''line'', ''rect'', ''rectRounded'', ''rectRot'', ''star'', ''triangle''.",
                         "type": "string"
                     },
                     "backgroundColor": {
                         "title": "Point or Bar Color",
-                        "description": "The inner color of the bars if you chose Drawing Type 'bar' or the inner colors of the points if you chose Drawing Type 'line'.",
+                        "description": "The inner color of the bars if you chose Drawing Type ''bar'' or the inner colors of the points if you chose Drawing Type ''line''.",
                         "type": "string"
                     },
                     "borderColor": {
                         "title": "Line Color",
-                        "description": "Give the color as a browser standard form. Either with names like 'red', 'green', etc. or as #de432b34 where two hex digits represent Red Green Blue Opacity in this order.",
+                        "description": "Give the color as a browser standard form. Either with names like ''red'', ''green'', etc. or as #de432b34 where two hex digits represent Red Green Blue Opacity in this order.",
                         "type": "string"
                     },
                     "borderWidth": {
                         "title": "Line Width",
-                        "description": "In case of Drawing Type 'bar' this determines the bar's border line width.",
+                        "description": "In case of Drawing Type ''bar'' this determines the bar''s border line width.",
                         "type": "number"
                     },
                     "borderDash": {
@@ -125,7 +125,7 @@
                                 },
                                 "pivot": {
                                     "title": "Pivot Column",
-                                    "description": "You can specify a column in the input data to autogenerate dataseries for each distinct entry in this column. E.g. if you have a table with columns [city, timestamp, temperature] and specify 'city' as pivot column, then you will get a line for each city.",
+                                    "description": "You can specify a column in the input data to autogenerate dataseries for each distinct entry in this column. E.g. if you have a table with columns [city, timestamp, temperature] and specify ''city'' as pivot column, then you will get a line for each city.",
                                     "type": "string"
                                 }
                             },
