@@ -1,7 +1,6 @@
 {
     "settings": {
-        "title": "A Chart Demo",
-        "subTitle": "This is a Sub title",
+
         "timeseries": true,
         "xAxisLabel": "Time",
         "yAxisLabel": "Temperature",
@@ -19,22 +18,22 @@
         "data": [{
                 "x": "2023-11-04T12:47:52.351152+00:00",
                 "y": 10,
-                "r": 20
+                "r": 10
             },
             {
                 "x": "2023-11-05T07:47:52.351152+00:00",
                 "y": 40,
-                "r": 10
+                "r": 5
             },
             {
                 "x": "2023-11-05T12:47:52.351152+00:00",
                 "y": 20,
-                "r": 30
+                "r": 20
             },
             {
                 "x": "2023-11-08T22:47:52.351152+00:00",
                 "y": 39,
-                "r": 40
+                "r": 20
             },
             {
                 "x": "2023-11-11T22:47:52.351152+00:00",
@@ -76,7 +75,7 @@
         "label": "Demo Line",
         "type": "line",
         "order": 2,
-        "chartName": "ddd#pivot#",
+        "chartName": "ddd",
         "showLine": true,
         "radius": 7,
         "pointStyle": "rectRounded",
