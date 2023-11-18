@@ -28,7 +28,7 @@
                     "type": "string"
                 },
                 "columnLayout": {
-                    "Title": "Vertical Layout",
+                    "title": "Vertical Layout",
                     "description": "When multiple charts are drawn, then they will be layed out horizontically or vertically.",
                     "type": "boolean"
                 }
