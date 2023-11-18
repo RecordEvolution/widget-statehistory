@@ -81,12 +81,12 @@
                     "backgroundColor": {
                         "title": "Point or Bar Color",
                         "description": "The inner color of the bars if you chose Drawing Type ''bar'' or the inner colors of the points if you chose Drawing Type ''line''.",
-                        "type": "string"
+                        "type": "color"
                     },
                     "borderColor": {
                         "title": "Line Color",
                         "description": "Give the color as a browser standard form. Either with names like ''red'', ''green'', etc. or as #de432b34 where two hex digits represent Red Green Blue Opacity in this order.",
-                        "type": "string"
+                        "type": "color"
                     },
                     "borderWidth": {
                         "title": "Line Width",
