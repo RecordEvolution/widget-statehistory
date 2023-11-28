@@ -58,8 +58,8 @@
                     },
                     "type": {
                         "title": "Drawing Type",
-                        "description": "Can be one of 'bar', 'line', 'bubble'.",
-                        "type": "string"
+                        "type": "string",
+                        "enum": ["bar", "line", "bubble"]
                     },
                     "showLine": {
                         "title": "Enable Line",
@@ -75,7 +75,8 @@
                     },
                     "pointStyle": {
                         "title": "Point Style",
-                        "type": "string"
+                        "type": "string",
+                        "enum": ["circle", "cross", "crossRot", "dash", "line", "rect", "rectRounded", "rectRot", "star", "triangle"]
                     },
                     "backgroundColor": {
                         "title": "Point or Bar Color",
