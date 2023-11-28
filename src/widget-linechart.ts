@@ -83,6 +83,7 @@ export class WidgetLinechart extends LitElement {
 
   applyInputData() {
     this.canvasList.forEach(({chart, dataSets}) => {
+
       if (chart) {
         chart.data.datasets = dataSets
         chart.options.scales.x.type = this.xAxisType()
@@ -152,7 +153,8 @@ export class WidgetLinechart extends LitElement {
   static styles = css`
   :host {
     display: block;
-    color: var(--re-line-text-color, #000);
+    color: var(--re-text-color, #000);
+    
     font-family: sans-serif;
     padding: 16px;
     box-sizing: border-box;
