@@ -87,6 +87,10 @@ export class WidgetLinechart extends LitElement {
       if (chart) {
         chart.data.datasets = dataSets
         chart.options.scales.x.type = this.xAxisType()
+        chart.options.scales.x.title.display = !!this.inputData?.settings?.xAxisLabel
+        chart.options.scales.x.title.text = this.inputData?.settings?.xAxisLabel
+        chart.options.scales.y.title.display = !!this.inputData?.settings?.yAxisLabel
+        chart.options.scales.y.title.text = this.inputData?.settings?.yAxisLabel
         chart?.update('resize')
       } else {
         this.createChart()
