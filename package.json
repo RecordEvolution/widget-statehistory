@@ -3,7 +3,7 @@
   "description": "Webcomponent widget-linechart following open-wc recommendations",
   "license": "MIT",
   "author": "widget-linechart",
-  "version": "1.4.0",
+  "version": "1.4.2",
   "type": "module",
   "main": "dist/src/index.js",
   "module": "dist/src/index.js",
