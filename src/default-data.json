@@ -75,7 +75,6 @@
         "label": "Demo Line",
         "type": "line",
         "order": 2,
-        "chartName": "ddd",
         "showLine": true,
         "radius": 7,
         "pointStyle": "rectRounded",
