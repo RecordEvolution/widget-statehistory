@@ -9,7 +9,6 @@
     "dataseries": [{
         "label": "Demo Bubble",
         "type": "bubble",
-        "order": 2,
         "radius": 4,
         "backgroundColor": "#f47272",
         "borderColor": "#147272",
@@ -43,7 +42,6 @@
     },{
         "label": "Demo Bar",
         "type": "bar",
-        "order": 3,
         "radius": 4,
         "pointStyle": "rectRounded",
         "backgroundColor": "#D7BBF5",
@@ -74,7 +72,6 @@
     {
         "label": "Demo Line",
         "type": "line",
-        "order": 2,
         "showLine": true,
         "radius": 7,
         "pointStyle": "rectRounded",
