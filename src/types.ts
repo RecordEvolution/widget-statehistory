@@ -14,7 +14,6 @@ export interface Settings {
 
 export interface Dataseries {
     label: string
-    order: number
     type: string
     chartName: string
     showLine: boolean

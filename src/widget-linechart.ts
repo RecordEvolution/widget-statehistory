@@ -35,7 +35,7 @@ export class WidgetLinechart extends LitElement {
 
     // reset all existing chart dataseries
     this.canvasList.forEach(chartM => chartM.dataSets = [])
-    this.inputData.dataseries.sort((a, b) => a.order - b.order).forEach(ds => {
+    this.inputData.dataseries.forEach(ds => {
       ds.chartName = ds.chartName ?? ''
       if (ds.borderDash && typeof ds.borderDash === 'string') ds.borderDash = JSON.parse(ds.borderDash)
 
@@ -48,7 +48,6 @@ export class WidgetLinechart extends LitElement {
         distincts.forEach((piv, i) => {
           const pds: any = {
             label: ds.label + ' ' + piv,
-            order: ds.order,
             type: ds.type,
             showLine: ds.showLine,
             radius: ds.radius,
