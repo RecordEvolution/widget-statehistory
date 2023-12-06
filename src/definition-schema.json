@@ -9,28 +9,35 @@
             "properties": {
                 "title": {
                     "title": "Title",
-                    "type": "string"
+                    "type": "string",
+                    "order": 1
                 },
                 "subTitle": {
                     "title": "Subtitle",
-                    "type": "string"
+                    "type": "string",
+                    "order": 2
                 },
                 "timeseries": {
                     "title": "Timeseries Chart",
-                    "type": "boolean"
+                    "description": "This will apply a proper time series x-Axis. Check if your x-values are timestamps.",
+                    "type": "boolean",
+                    "order": 3
                 },
                 "xAxisLabel": {
                     "title": "X-Axis Label",
-                    "type": "string"
+                    "type": "string",
+                    "order": 4
                 },
                 "yAxisLabel": {
                     "title": "Y-Axis Label",
-                    "type": "string"
+                    "type": "string",
+                    "order": 5
                 },
                 "columnLayout": {
                     "title": "Vertical Layout",
                     "description": "When multiple charts are drawn, then they will be layed out horizontically or vertically.",
-                    "type": "boolean"
+                    "type": "boolean",
+                    "order": 6
                 }
             },
             "required": []
@@ -44,63 +51,75 @@
                     "label": {
                         "title": "Label",
                         "description": "The name for this data series",
-                        "type": "string"
+                        "type": "string",
+                        "order": 1
                     },
                     "order": {
                         "title": "Draw Order",
                         "description": "Determines the draw order of the series. Dataseries with lower numbers are drawn on top of ones with higher numbers.",
-                        "type": "number"
+                        "type": "number",
+                        "order": 2
                     },
                     "chartName": {
                         "title": "Chart",
                         "description": "If two dataseries have the same 'Chart' name, they will be drawn in the same chart. Otherwise they will get their own chart. If the name ends with #pivot# then a separat chart will be drawn for each pivoted dataseries.",
-                        "type": "string"
+                        "type": "string",
+                        "order": 3
                     },
                     "type": {
-                        "title": "Drawing Type",
+                        "title": "Drawing Style",
                         "type": "string",
-                        "enum": ["bar", "line", "bubble"]
+                        "enum": ["bar", "line", "bubble"],
+                        "order": 4
                     },
                     "showLine": {
                         "title": "Enable Line",
                         "description": "If you want to see just points, then uncheck this.",
-                        "type": "boolean"
+                        "type": "boolean",
+                        "order": 5
                     },
                     "radius": {
                         "title": "Point Radius",
                         "description": "To disable points, set this to 0.",
                         "type": "number",
                         "minimum": 1,
-                        "maximum": 100
+                        "maximum": 100,
+                        "order": 6
                     },
                     "pointStyle": {
                         "title": "Point Style",
                         "type": "string",
-                        "enum": ["circle", "cross", "crossRot", "dash", "line", "rect", "rectRounded", "rectRot", "star", "triangle"]
+                        "enum": ["circle", "cross", "crossRot", "dash", "line", "rect", "rectRounded", "rectRot", "star", "triangle"],
+                        "order": 7
                     },
                     "backgroundColor": {
                         "title": "Point or Bar Color",
                         "description": "The inner color of the bars if you chose Drawing Type 'bar' or the inner colors of the points if you chose Drawing Type 'line'.",
-                        "type": "color"
+                        "type": "color",
+                        "order": 8
                     },
                     "borderColor": {
                         "title": "Line Color",
-                        "type": "color"
+                        "type": "color",
+                        "order": 9
                     },
                     "borderWidth": {
                         "title": "Line Width",
                         "description": "In case of Drawing Type 'bar' this determines the bar's border line width.",
-                        "type": "number"
+                        "type": "number",
+                        "order": 10
                     },
                     "borderDash": {
                         "title": "Line Dash Style",
                         "description": "Specify dash length and space-between-dashes length like this: [10, 5].",
-                        "type": "string"
+                        "type": "string",
+                        "order": 11
                     },
                     "fill": {
                         "title": "Line Area Fill",
                         "description": "Check this box to turn a line chart into an area chart.",
-                        "type": "boolean"
+                        "type": "boolean",
+                        "order": 12
                     },
                     "data": {
                         "title": "Data",
@@ -129,12 +148,13 @@
                                 }
                             },
                             "required": ["x", "y"]
-                        }
+                        },
+                        "order": 13
                     }
                 },
-                "required": ["label", "data"]
+                "required": ["label", "data", "type"]
             }
         }
     },
-    "required": ["settings"]
+    "required": []
 }
