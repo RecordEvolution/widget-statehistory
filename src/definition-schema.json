@@ -52,6 +52,7 @@
                         "title": "Label",
                         "description": "The name for this data series",
                         "type": "string",
+                        "required": true,
                         "order": 1
                     },
                     "order": {
@@ -70,6 +71,7 @@
                         "title": "Drawing Style",
                         "type": "string",
                         "enum": ["bar", "line", "bubble"],
+                        "required": true,
                         "order": 4
                     },
                     "showLine": {
@@ -131,10 +133,12 @@
                             "properties": {
                                 "x": {
                                     "description": "If timeseries is checked in the settings, then this should be an ISO String date like 2023-11-04T22:47:52.351152+00:00. But this works with many other formats as well.",
-                                    "type": "string"
+                                    "type": "string",
+                                    "required": true
                                 },
                                 "y": {
-                                    "type": "number"
+                                    "type": "number",
+                                    "required": true
                                 },
                                 "r": {
                                     "title": "Point Radius",
@@ -146,13 +150,11 @@
                                     "description": "You can specify a column in the input data to autogenerate dataseries for each distinct entry in this column. E.g. if you have a table with columns [city, timestamp, temperature] and specify 'city' as pivot column, then you will get a line for each city.",
                                     "type": "string"
                                 }
-                            },
-                            "required": ["x", "y"]
+                            }
                         },
                         "order": 13
                     }
-                },
-                "required": ["label", "data", "type"]
+                }
             }
         }
     },
