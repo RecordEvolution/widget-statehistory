@@ -15,7 +15,8 @@
     "analyze": "cem analyze --litelement",
     "start": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wds\"",
     "build": "rollup -c rollup.config.js",
-    "prepublish": "rollup -c rollup.config.js"
+    "prepublish": "rollup -c rollup.config.js",
+    "release": "npm version patch --tag-version-prefix='' && git push && git push --tag"
   },
   "dependencies": {
     "chart.js": "^4.4.0",
