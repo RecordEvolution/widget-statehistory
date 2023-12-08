@@ -6,6 +6,7 @@
         "settings": {
             "title": "Global Settings",
             "type": "object",
+            "order": 1,
             "properties": {
                 "title": {
                     "title": "Title",
@@ -39,12 +40,12 @@
                     "type": "boolean",
                     "order": 6
                 }
-            },
-            "required": []
+            }
         },
         "dataseries": {
             "title": "Dataseries",
             "type": "array",
+            "order": 2,
             "items": {
                 "type": "object",
                 "properties": {
@@ -127,6 +128,7 @@
                         "title": "Data",
                         "description": "The data used to draw this data series.",
                         "type": "array",
+                        "order": 13,
                         "buffersize": 1000,
                         "items": {
                             "type": "object",
@@ -134,29 +136,31 @@
                                 "x": {
                                     "description": "If timeseries is checked in the settings, then this should be an ISO String date like 2023-11-04T22:47:52.351152+00:00. But this works with many other formats as well.",
                                     "type": "string",
+                                    "order": 1,
                                     "required": true
                                 },
                                 "y": {
                                     "type": "number",
+                                    "order": 2,
                                     "required": true
                                 },
                                 "r": {
                                     "title": "Point Radius",
                                     "description": "Valid only for Bubble Chart type.",
+                                    "order": 3,
                                     "type": "number"
                                 },
                                 "pivot": {
                                     "title": "Pivot Column",
                                     "description": "You can specify a column in the input data to autogenerate dataseries for each distinct entry in this column. E.g. if you have a table with columns [city, timestamp, temperature] and specify 'city' as pivot column, then you will get a line for each city.",
+                                    "order": 4,
                                     "type": "string"
                                 }
                             }
-                        },
-                        "order": 13
+                        }
                     }
                 }
             }
         }
-    },
-    "required": []
+    }
 }
