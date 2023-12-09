@@ -1,4 +1,3 @@
-import type { Point, ChartDataset } from 'chart.js/auto';
 export interface InputData {
     settings: Settings,
     dataseries: Dataseries[]
