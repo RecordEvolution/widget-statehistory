@@ -80,9 +80,11 @@ export class WidgetLinechart extends LitElement {
     // console.log('new linechart datasets', this.canvasList)
   }
 
-  applyInputData() {
-    this.canvasList.forEach(({chart, dataSets}) => {
 
+  applyInputData() {
+    this.setupCharts()
+
+    this.canvasList.forEach(({chart, dataSets}) => {
       if (chart) {
         chart.data.datasets = dataSets
         chart.options.scales.x.type = this.xAxisType()
@@ -91,8 +93,6 @@ export class WidgetLinechart extends LitElement {
         chart.options.scales.y.title.display = !!this.inputData?.settings?.yAxisLabel
         chart.options.scales.y.title.text = this.inputData?.settings?.yAxisLabel
         chart?.update('resize')
-      } else {
-        this.createChart()
       }
     })
   }
@@ -105,8 +105,11 @@ export class WidgetLinechart extends LitElement {
     return 'category'
   }
 
-  createChart() {
+  setupCharts() {
+
     this.canvasList.forEach((chartM, chartName) => {
+      if (!chartM.dataSets.length) this.canvasList.delete(chartName)
+      if (chartM.chart) return
       const canvas = this.shadowRoot?.querySelector(`[name="${chartName}"]`) as HTMLCanvasElement
       if (!canvas) return
       // console.log('chartM', canvas, chartM.chart)
