@@ -75,12 +75,6 @@
                         "required": true,
                         "order": 4
                     },
-                    "showLine": {
-                        "title": "Enable Line",
-                        "description": "If you want to see just points, then uncheck this.",
-                        "type": "boolean",
-                        "order": 5
-                    },
                     "radius": {
                         "title": "Point Radius",
                         "description": "To disable points, set this to 0.",

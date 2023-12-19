@@ -21,7 +21,7 @@ export interface Dataseries {
     backgroundColor: string
     borderColor: string
     borderWidth: number
-    borderDash: string
+    borderDash?: string
     fill: boolean
     data: Data[]
 }

@@ -37,7 +37,11 @@ export class WidgetLinechart extends LitElement {
     this.canvasList.forEach(chartM => chartM.dataSets = [])
     this.inputData.dataseries.forEach(ds => {
       ds.chartName = ds.chartName ?? ''
-      if (ds.borderDash && typeof ds.borderDash === 'string') ds.borderDash = JSON.parse(ds.borderDash)
+      if (ds.borderDash && typeof ds.borderDash === 'string') {
+        ds.borderDash = JSON.parse(ds.borderDash)
+      } else {
+        ds.borderDash = undefined
+      }
 
       // pivot data
       const distincts = [...new Set(ds.data.map((d: Data) => d.pivot))]
@@ -49,7 +53,7 @@ export class WidgetLinechart extends LitElement {
           const pds: any = {
             label: ds.label + ' ' + piv,
             type: ds.type,
-            showLine: ds.showLine,
+            showLine: true,
             radius: ds.radius,
             pointStyle: ds.pointStyle,
             backgroundColor: derivedBgColors[i],

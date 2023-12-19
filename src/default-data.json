@@ -72,13 +72,11 @@
     {
         "label": "Demo Line",
         "type": "line",
-        "showLine": true,
         "radius": 7,
         "pointStyle": "rectRounded",
         "backgroundColor": "#AFF6F9",
         "borderColor": "#47BBF5bb",
         "borderWidth": 2,
-        "borderDash": "[10, 10]",
         "fill": false,
         "data": [{
                 "x": "2023-11-03T22:47:52.351152+00:00",
