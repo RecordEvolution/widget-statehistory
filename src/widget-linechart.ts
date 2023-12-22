@@ -16,6 +16,8 @@ export class WidgetLinechart extends LitElement {
 
   @state()
   private canvasList: Map<string, {chart?: any, dataSets: Dataseries[]}> = new Map()
+  
+  version: string = 'versionplaceholder'
 
   update(changedProperties: Map<string, any>) {
     if (changedProperties.has('inputData')) {
@@ -236,7 +238,7 @@ export class WidgetLinechart extends LitElement {
     `;
   }
 }
-window.customElements.define('widget-linechart', WidgetLinechart)
+window.customElements.define('widget-linechart-versionplaceholder', WidgetLinechart)
 
 // ############################################### WORKAROUND #######################################################################
 //
