@@ -7,12 +7,15 @@ import tinycolor from "tinycolor2";
 // import 'chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm';
 // import 'chartjs-adapter-moment';
 // import 'chartjs-adapter-date-fns';
-import { InputData, Data, Dataseries } from './types.js'
+import { ConfigureTheChart } from './definition-schema.js';
+
+type Dataseries = Exclude<ConfigureTheChart['dataseries'], undefined>[number]
+type Data = Exclude<Dataseries['data'], undefined>[number]
 
 export class WidgetLinechart extends LitElement {
   
   @property({type: Object}) 
-  inputData = {} as InputData
+  inputData?: ConfigureTheChart
 
   @state()
   private canvasList: Map<string, {chart?: any, dataSets: Dataseries[]}> = new Map()
@@ -33,7 +36,7 @@ export class WidgetLinechart extends LitElement {
 
   transformInputData() {
 
-    if (!this?.inputData?.dataseries.length) return
+    if (!this?.inputData?.dataseries?.length) return
 
     // reset all existing chart dataseries
     this.canvasList.forEach(chartM => chartM.dataSets = [])
@@ -46,7 +49,7 @@ export class WidgetLinechart extends LitElement {
       }
 
       // pivot data
-      const distincts = [...new Set(ds.data.map((d: Data) => d.pivot))]
+      const distincts = [...new Set(ds.data?.map((d: Data) => d.pivot))]
       const derivedBgColors = tinycolor(ds.backgroundColor).monochromatic(distincts.length).map((c: any) => c.toHexString())
       const derivedBdColors = tinycolor(ds.borderColor).monochromatic(distincts.length).map((c: any) => c.toHexString())
 
@@ -63,10 +66,10 @@ export class WidgetLinechart extends LitElement {
             borderWidth: ds.borderWidth,
             borderDash: ds.borderDash,
             fill: ds.fill,
-            data: ds.data.filter(d => d.pivot === piv)
+            data: ds.data?.filter(d => d.pivot === piv)
           }
           // If the chartName ends with :pivot: then create a seperate chart for each pivoted dataseries
-          const chartName = ds.chartName.endsWith('#pivot#') ? ds.chartName + piv : ds.chartName
+          const chartName = ds.chartName?.endsWith('#pivot#') ? ds.chartName + piv : ds.chartName ?? ''
           if (!this.canvasList.has(chartName)) {
             // initialize new charts
             this.canvasList.set(chartName, {chart: undefined, dataSets: [] as Dataseries[]})
@@ -103,11 +106,10 @@ export class WidgetLinechart extends LitElement {
     })
   }
 
-  xAxisType() {
+  xAxisType(): "linear" | "logarithmic" | "category" | "time" | "timeseries" | undefined {
     if (this.inputData?.settings?.timeseries) return 'time'
-    const onePoint = this.inputData.dataseries?.[0].data?.[0]
-    // @ts-ignore
-    if (onePoint && !isNaN(onePoint.x)) return 'linear'
+    const onePoint = this.inputData?.dataseries?.[0].data?.[0]
+    if (!isNaN(Number(onePoint?.x))) return 'linear'
     return 'category'
   }
 

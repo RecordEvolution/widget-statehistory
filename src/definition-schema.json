@@ -48,6 +48,7 @@
             "order": 2,
             "items": {
                 "type": "object",
+                "required": ["label", "type"],
                 "properties": {
                     "label": {
                         "title": "Label",
@@ -93,11 +94,13 @@
                         "title": "Point or Bar Color",
                         "description": "The inner color of the bars if you chose Drawing Type 'bar' or the inner colors of the points if you chose Drawing Type 'line'.",
                         "type": "color",
+                        "color": true,
                         "order": 8
                     },
                     "borderColor": {
                         "title": "Line Color",
                         "type": "color",
+                        "color": true,
                         "order": 9
                     },
                     "borderWidth": {
@@ -126,6 +129,7 @@
                         "buffersize": 1000,
                         "items": {
                             "type": "object",
+                            "required": ["x", "y"],
                             "properties": {
                                 "x": {
                                     "description": "If timeseries is checked in the settings, then this should be an ISO String date like 2023-11-04T22:47:52.351152+00:00. But this works with many other formats as well.",
