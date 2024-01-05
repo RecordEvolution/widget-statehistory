@@ -1,4 +1,3 @@
-
 {
     "title": "Configure the Chart",
     "type": "object",
@@ -48,7 +47,6 @@
             "order": 2,
             "items": {
                 "type": "object",
-                "required": ["label", "type"],
                 "properties": {
                     "label": {
                         "title": "Label",
@@ -87,7 +85,18 @@
                     "pointStyle": {
                         "title": "Point Style",
                         "type": "string",
-                        "enum": ["circle", "cross", "crossRot", "dash", "line", "rect", "rectRounded", "rectRot", "star", "triangle"],
+                        "enum": [
+                            "circle",
+                            "cross",
+                            "crossRot",
+                            "dash",
+                            "line",
+                            "rect",
+                            "rectRounded",
+                            "rectRot",
+                            "star",
+                            "triangle"
+                        ],
                         "order": 7
                     },
                     "backgroundColor": {
@@ -129,7 +138,6 @@
                         "buffersize": 1000,
                         "items": {
                             "type": "object",
-                            "required": ["x", "y"],
                             "properties": {
                                 "x": {
                                     "description": "If timeseries is checked in the settings, then this should be an ISO String date like 2023-11-04T22:47:52.351152+00:00. But this works with many other formats as well.",
