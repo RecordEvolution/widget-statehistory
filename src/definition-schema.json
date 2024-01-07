@@ -63,7 +63,7 @@
                     },
                     "chartName": {
                         "title": "Chart",
-                        "description": "If two dataseries have the same 'Chart' name, they will be drawn in the same chart. Otherwise they will get their own chart. If the name ends with #pivot# then a separat chart will be drawn for each pivoted dataseries.",
+                        "description": "If two dataseries have the same 'Chart' name, they will be drawn in the same chart. Otherwise they will get their own chart. If the name contains #pivot# as substring then a separat chart will be drawn for each pivoted dataseries.",
                         "type": "string",
                         "order": 3
                     },

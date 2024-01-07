@@ -71,7 +71,7 @@ export class WidgetLinechart extends LitElement {
                         data: ds.data?.filter((d) => d.pivot === piv)
                     }
                     // If the chartName ends with :pivot: then create a seperate chart for each pivoted dataseries
-                    const chartName = ds.chartName?.endsWith('#pivot#')
+                    const chartName = ds.chartName?.includes('#pivot#')
                         ? ds.chartName + piv
                         : ds.chartName ?? ''
                     if (!this.canvasList.has(chartName)) {
