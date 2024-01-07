@@ -47,7 +47,7 @@ export class WidgetLinechart extends LitElement {
             }
 
             // pivot data
-            const distincts = [...new Set(ds.data?.map((d: Data) => d.pivot))]
+            const distincts = [...new Set(ds.data?.map((d: Data) => d.pivot))].sort()
             const derivedBgColors = tinycolor(ds.backgroundColor)
                 .monochromatic(distincts.length)
                 .map((c: any) => c.toHexString())
