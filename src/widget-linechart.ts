@@ -55,38 +55,33 @@ export class WidgetLinechart extends LitElement {
                 .monochromatic(distincts.length)
                 .map((c: any) => c.toHexString())
 
-            if (distincts.length > 1) {
-                distincts.forEach((piv, i) => {
-                    const pds: any = {
-                        label: ds.label + ' ' + piv,
-                        type: ds.type,
-                        showLine: true,
-                        radius: ds.radius,
-                        pointStyle: ds.pointStyle,
-                        backgroundColor: derivedBgColors[i],
-                        borderColor: derivedBdColors[i],
-                        borderWidth: ds.borderWidth,
-                        borderDash: ds.borderDash,
-                        fill: ds.fill,
-                        data: ds.data?.filter((d) => d.pivot === piv)
-                    }
-                    // If the chartName ends with :pivot: then create a seperate chart for each pivoted dataseries
-                    const chartName = ds.chartName?.includes('#pivot#')
-                        ? ds.chartName + piv
-                        : ds.chartName ?? ''
-                    if (!this.canvasList.has(chartName)) {
-                        // initialize new charts
-                        this.canvasList.set(chartName, { chart: undefined, dataSets: [] as Dataseries[] })
-                    }
-                    this.canvasList.get(chartName)?.dataSets.push(pds)
-                })
-            } else {
-                if (!this.canvasList.has(ds.chartName)) {
-                    // initialize new charts
-                    this.canvasList.set(ds.chartName, { chart: undefined, dataSets: [] as Dataseries[] })
+            distincts.forEach((piv, i) => {
+                const prefix = piv ? `${piv} - ` : ''
+                const pds: any = {
+                    label: prefix + ds.label ?? '',
+                    type: ds.type,
+                    showLine: true,
+                    radius: ds.radius,
+                    pointStyle: ds.pointStyle,
+                    backgroundColor: ds.chartName?.includes('#pivot#')
+                        ? ds.backgroundColor
+                        : derivedBgColors[i],
+                    borderColor: ds.chartName?.includes('#pivot#') ? ds.borderColor : derivedBdColors[i],
+                    borderWidth: ds.borderWidth,
+                    borderDash: ds.borderDash,
+                    fill: ds.fill,
+                    data: distincts.length === 1 ? ds.data : ds.data?.filter((d) => d.pivot === piv)
                 }
-                this.canvasList.get(ds.chartName)?.dataSets.push(ds)
-            }
+                // If the chartName ends with :pivot: then create a seperate chart for each pivoted dataseries
+                const chartName = ds.chartName?.includes('#pivot#')
+                    ? ds.chartName + '-' + piv
+                    : ds.chartName ?? ''
+                if (!this.canvasList.has(chartName)) {
+                    // initialize new charts
+                    this.canvasList.set(chartName, { chart: undefined, dataSets: [] as Dataseries[] })
+                }
+                this.canvasList.get(chartName)?.dataSets.push(pds)
+            })
         })
         // prevent duplicate transformation
         this.inputData.dataseries = []
