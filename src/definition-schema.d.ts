@@ -54,9 +54,9 @@ export type PointStyle =
  */
 export type DrawOrder = number;
 /**
- * If two dataseries have the same 'Chart' name, they will be drawn in the same chart. Otherwise they will get their own chart. If the name contains #pivot# as substring then a separat chart will be drawn for each pivoted dataseries.
+ * If two dataseries have the same 'Chart Name', they will be drawn in the same chart. Otherwise they will get their own chart. If the name contains #split# as substring then a separat chart will be drawn for each split dataseries.
  */
-export type Subchart = string;
+export type ChartName = string;
 /**
  * If timeseries is checked in the settings, then this should be an ISO String date like 2023-11-04T22:47:52.351152+00:00. But this works with many other formats as well.
  */
@@ -124,6 +124,6 @@ export interface Styling {
 }
 export interface AdvancedSettings {
   drawOrder?: DrawOrder;
-  chartName?: Subchart;
+  chartName?: ChartName;
   [k: string]: unknown;
 }
