@@ -1,79 +1,103 @@
 {
-    "settings": {
+    "axis": {
         "timeseries": true,
         "xAxisLabel": "Time",
         "yAxisLabel": "Temperature",
         "columnLayout": false
     },
-    "dataseries": [{
-        "label": "Demo Bubble",
-        "type": "bubble",
-        "radius": 4,
-        "backgroundColor": "#f47272",
-        "borderColor": "#147272",
-        "borderWidth": 2,
-        "fill": false,
-        "data": [
-            {
-                "x": "2023-11-05T12:47:52.351152+00:00",
-                "y": 20,
-                "r": 10
+    "dataseries": [
+        {
+            "label": "Demo Bubble",
+            "type": "bubble",
+            "backgroundColor": "#f47272",
+            "borderColor": "#147272",
+            "styling": {
+                "radius": 4,
+                "borderWidth": 2,
+                "fill": false
             },
-            {
-                "x": "2023-11-11T22:47:52.351152+00:00",
-                "y": 22,
-                "r": 27
-            }]
-    },{
-        "label": "Demo Bar",
-        "type": "bar",
-        "radius": 4,
-        "pointStyle": "rectRounded",
-        "backgroundColor": "#D7BBF5",
-        "borderColor": "#A076F9",
-        "borderWidth": 2,
-        "fill": false,
-        "data": [{
-                "x": "2023-11-04T22:47:52.351152+00:00",
-                "y": 28
+            "advanced": {
+                "drawOrder": 1
             },
-            {
-                "x": "2023-11-05T22:47:52.351152+00:00",
-                "y": 10
+            "data": [
+                {
+                    "x": "2023-11-05T12:47:52.351152+00:00",
+                    "y": 20,
+                    "r": 10
+                },
+                {
+                    "x": "2023-11-11T22:47:52.351152+00:00",
+                    "y": 32,
+                    "r": 27
+                }
+            ]
+        },
+        {
+            "label": "Demo Bar",
+            "type": "bar",
+            "backgroundColor": "#F5D7BB",
+            "borderColor": "#F9A076",
+            "styling": {
+                "borderWidth": 2,
+                "radius": 4,
+                "pointStyle": "rectRounded",
+                "fill": false
             },
-            {
-                "x": "2023-11-07T22:47:52.351152+00:00",
-                "y": 59
+            "advanced": {
+                "drawOrder": 2
             },
-            {
-                "x": "2023-11-10T22:47:52.351152+00:00",
-                "y": 42
-            }]
-    },
-    {
-        "label": "Demo Line",
-        "type": "line",
-        "radius": 7,
-        "pointStyle": "rectRounded",
-        "backgroundColor": "#AFF6F9",
-        "borderColor": "#47BBF5bb",
-        "borderWidth": 2,
-        "fill": false,
-        "data": [{
-                "x": "2023-11-03T22:47:52.351152+00:00",
-                "y": 20
+            "data": [
+                {
+                    "x": "2023-11-04T22:47:52.351152+00:00",
+                    "y": 28
+                },
+                {
+                    "x": "2023-11-05T22:47:52.351152+00:00",
+                    "y": 10
+                },
+                {
+                    "x": "2023-11-07T22:47:52.351152+00:00",
+                    "y": 59
+                },
+                {
+                    "x": "2023-11-10T22:47:52.351152+00:00",
+                    "y": 42
+                }
+            ]
+        },
+        {
+            "label": "Demo Line",
+            "type": "line",
+            "styling": {
+                "fill": false,
+                "borderWidth": 2,
+                "borderDash": "5, 5",
+                "radius": 7,
+                "pointStyle": "rectRounded"
             },
-            {
-                "x": "2023-11-06T09:47:52.351152+00:00",
-                "y": 40
+            "backgroundColor": "#AFF6F9",
+            "borderColor": "#47BBF5bb",
+            "advanced": {
+                "drawOrder": 3
             },
-            {
-                "x": "2023-11-08T09:47:52.351152+00:00",
-                "y": 55
-            },
-            {
-                "x": "2023-11-11T22:47:52.351152+00:00",
-                "y": 20
-            }]
-    }]
+            "data": [
+                {
+                    "x": "2023-11-03T22:47:52.351152+00:00",
+                    "y": 20
+                },
+                {
+                    "x": "2023-11-06T09:47:52.351152+00:00",
+                    "y": 40
+                },
+                {
+                    "x": "2023-11-08T09:47:52.351152+00:00",
+                    "y": 45
+                },
+                {
+                    "x": "2023-11-11T22:47:52.351152+00:00",
+                    "y": 20
+                }
+            ]
+        }
+    ]
 }

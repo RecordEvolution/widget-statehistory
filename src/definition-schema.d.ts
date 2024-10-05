@@ -21,15 +21,19 @@ export type VerticalLayout = boolean;
  * The name for this data series
  */
 export type Label = string;
-/**
- * Determines the draw order of the series. Dataseries with lower numbers are drawn on top of ones with higher numbers.
- */
-export type DrawOrder = number;
-/**
- * If two dataseries have the same 'Chart' name, they will be drawn in the same chart. Otherwise they will get their own chart. If the name ends with #pivot# then a separat chart will be drawn for each pivoted dataseries.
- */
-export type Chart = string;
 export type DrawingStyle = "bar" | "line" | "bubble";
+/**
+ * Check this box to turn a line chart into an area chart.
+ */
+export type LineAreaFill = boolean;
+/**
+ * In case of Drawing Type 'bar' this determines the bar's border line width.
+ */
+export type LineWidth = number;
+/**
+ * Specify dash length and space-between-dashes length like this: [10, 5].
+ */
+export type LineDashStyle = string;
 /**
  * To disable points, set this to 0.
  */
@@ -46,70 +50,80 @@ export type PointStyle =
   | "star"
   | "triangle";
 /**
- * The inner color of the bars if you chose Drawing Type 'bar' or the inner colors of the points if you chose Drawing Type 'line'.
+ * Determines the draw order of the series. Dataseries with lower numbers are drawn on top of ones with higher numbers.
  */
-export type PointOrBarColor = string;
-export type LineColor = string;
+export type DrawOrder = number;
 /**
- * In case of Drawing Type 'bar' this determines the bar's border line width.
+ * If two dataseries have the same 'Chart' name, they will be drawn in the same chart. Otherwise they will get their own chart. If the name contains #pivot# as substring then a separat chart will be drawn for each pivoted dataseries.
  */
-export type LineWidth = number;
+export type Subchart = string;
 /**
- * Specify dash length and space-between-dashes length like this: [10, 5].
+ * If timeseries is checked in the settings, then this should be an ISO String date like 2023-11-04T22:47:52.351152+00:00. But this works with many other formats as well.
  */
-export type LineDashStyle = string;
-/**
- * Check this box to turn a line chart into an area chart.
- */
-export type LineAreaFill = boolean;
+export type XValue = string;
+export type YValue = number;
 /**
  * Valid only for Bubble Chart type.
  */
 export type PointRadius1 = number;
 /**
- * You can specify a column in the input data to autogenerate dataseries for each distinct entry in this column. E.g. if you have a table with columns [city, timestamp, temperature] and specify 'city' as pivot column, then you will get a line for each city.
+ * You can specify a column in the input data to autogenerate dataseries for each distinct entry in this column. E.g. if you have a table with columns [city, timestamp, temperature] and specify 'city' as split column, then you will get a line for each city.
  */
-export type PivotColumn = string;
+export type SplitDataBy = string;
 /**
  * The data used to draw this data series.
  */
 export type Data = {
-  /**
-   * If timeseries is checked in the settings, then this should be an ISO String date like 2023-11-04T22:47:52.351152+00:00. But this works with many other formats as well.
-   */
-  x: string;
-  y: number;
+  x?: XValue;
+  y?: YValue;
   r?: PointRadius1;
-  pivot?: PivotColumn;
+  pivot?: SplitDataBy;
   [k: string]: unknown;
 }[];
 export type Dataseries = {
-  label: Label;
-  order?: DrawOrder;
-  chartName?: Chart;
-  type: DrawingStyle;
-  radius?: PointRadius;
-  pointStyle?: PointStyle;
-  backgroundColor?: PointOrBarColor;
+  label?: Label;
+  type?: DrawingStyle;
+  backgroundColor?: FillColor;
   borderColor?: LineColor;
-  borderWidth?: LineWidth;
-  borderDash?: LineDashStyle;
-  fill?: LineAreaFill;
+  styling?: Styling;
+  advanced?: AdvancedSettings;
   data?: Data;
   [k: string]: unknown;
 }[];
 
-export interface ConfigureTheChart {
-  settings?: GlobalSettings;
+export interface InputData {
+  title?: Title;
+  subTitle?: Subtitle;
+  axis?: AxisSettings;
   dataseries?: Dataseries;
   [k: string]: unknown;
 }
-export interface GlobalSettings {
-  title?: Title;
-  subTitle?: Subtitle;
+export interface AxisSettings {
   timeseries?: TimeseriesChart;
   xAxisLabel?: XAxisLabel;
   yAxisLabel?: YAxisLabel;
   columnLayout?: VerticalLayout;
+  [k: string]: unknown;
+}
+/**
+ * The inner color of the bars if you chose Drawing Type 'bar' or the inner colors of the points if you chose Drawing Type 'line'.
+ */
+export interface FillColor {
+  [k: string]: unknown;
+}
+export interface LineColor {
+  [k: string]: unknown;
+}
+export interface Styling {
+  fill?: LineAreaFill;
+  borderWidth?: LineWidth;
+  borderDash?: LineDashStyle;
+  radius?: PointRadius;
+  pointStyle?: PointStyle;
+  [k: string]: unknown;
+}
+export interface AdvancedSettings {
+  drawOrder?: DrawOrder;
+  chartName?: Subchart;
   [k: string]: unknown;
 }

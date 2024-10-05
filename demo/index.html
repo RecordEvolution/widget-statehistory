@@ -24,9 +24,9 @@
   <script type="module">
     import { html, render } from 'lit';
     import '../dist/src/widget-linechart.js';
-    import data from '../src/default-data.json' assert { type: 'json' };
-    
-    const keyPathsToRandomize = ['dataseries.0.data.0.y', 'settings.title'];
+    const response = await fetch('../src/default-data.json');
+    const data = await response.json();
+    const keyPathsToRandomize = ['dataseries.0.data.0.y', 'title'];
     setInterval(() => {
       const randomizedObj = randomizeObjectValues(data, keyPathsToRandomize);
 
