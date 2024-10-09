@@ -92,7 +92,7 @@ export class WidgetLinechart extends LitElement {
             })
         })
         // prevent duplicate transformation
-        this.inputData.dataseries = []
+        // this.inputData.dataseries = []
         // console.log('new linechart datasets', this.canvasList)
     }
 
@@ -115,7 +115,7 @@ export class WidgetLinechart extends LitElement {
 
     xAxisType(): 'linear' | 'logarithmic' | 'category' | 'time' | 'timeseries' | undefined {
         if (this.inputData?.axis?.timeseries) return 'time'
-        const onePoint = this.inputData?.dataseries?.[0].data?.[0]
+        const onePoint = this.inputData?.dataseries?.[0]?.data?.[0]
         if (!isNaN(Number(onePoint?.x))) return 'linear'
         return 'category'
     }
