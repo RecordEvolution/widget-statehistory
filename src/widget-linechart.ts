@@ -20,9 +20,10 @@ export class WidgetLinechart extends LitElement {
     private canvasList: Map<string, { chart?: any; dataSets: Dataseries[] }> = new Map()
 
     version: string = 'versionplaceholder'
+    chartContainer?: HTMLElement | DocumentFragment
 
     update(changedProperties: Map<string, any>) {
-        if (changedProperties.has('inputData')) {
+        if (changedProperties.has('inputData') && this.chartContainer) {
             this.transformInputData()
             this.applyInputData()
         }
@@ -30,6 +31,8 @@ export class WidgetLinechart extends LitElement {
     }
 
     protected firstUpdated(): void {
+        this.chartContainer = this.shadowRoot?.querySelector('.chart-container') as HTMLElement
+        this.transformInputData()
         this.applyInputData()
     }
 
@@ -47,9 +50,10 @@ export class WidgetLinechart extends LitElement {
             } else {
                 ds.borderDash = undefined
             }
+            ds.data ??= []
 
             // pivot data
-            const distincts = [...new Set(ds.data?.map((d: Data) => d.pivot))].sort()
+            const distincts = [...new Set(ds.data.map((d: Data) => d.pivot))].sort()
             const derivedBgColors = tinycolor(ds.backgroundColor as ColorInput | undefined)
                 .monochromatic(distincts.length)
                 .map((c: any) => c.toHexString())
@@ -68,7 +72,7 @@ export class WidgetLinechart extends LitElement {
                         : derivedBdColors[i],
                     backgroundColor: ds.advanced?.chartName?.includes('#split#')
                         ? ds.backgroundColor
-                        : derivedBdColors[i],
+                        : derivedBgColors[i],
                     styling: ds.styling,
                     pointStyle: ds.styling?.pointStyle,
                     radius: ds.styling?.radius,
@@ -80,7 +84,7 @@ export class WidgetLinechart extends LitElement {
                 }
                 let chartName = ds.advanced?.chartName ?? ''
                 if (chartName.includes('#split#')) {
-                    chartName = chartName + '-' + piv
+                    chartName = prefix + chartName
                 }
                 // If the chartName ends with :pivot: then create a seperate chart for each pivoted dataseries
 
@@ -122,10 +126,24 @@ export class WidgetLinechart extends LitElement {
 
     setupCharts() {
         this.canvasList.forEach((chartM, chartName) => {
-            if (!chartM.dataSets.length) this.canvasList.delete(chartName)
+            if (!chartM.dataSets.length) {
+                this.shadowRoot?.querySelector(`div[name="${chartName}"]`)?.remove()
+                this.canvasList.delete(chartName)
+                return
+            }
             if (chartM.chart) return
-            const canvas = this.shadowRoot?.querySelector(`[name="${chartName}"]`) as HTMLCanvasElement
-            if (!canvas) return
+
+            if (!this.chartContainer) throw new Error('chartContainer not found')
+
+            const newContainer = document.createElement('div')
+            newContainer.setAttribute('name', chartName)
+            newContainer.setAttribute('class', 'sizer')
+            const canvas = document.createElement('canvas')
+            canvas.setAttribute('name', chartName)
+            newContainer.appendChild(canvas)
+            this.chartContainer.appendChild(newContainer)
+
+            if (!canvas) throw new Error('canvas not found')
             // console.log('chartM', canvas, chartM.chart)
             chartM.chart = new Chart(canvas, {
                 type: 'line',
@@ -234,17 +252,9 @@ export class WidgetLinechart extends LitElement {
                     <p class="paging" ?active=${this.inputData?.subTitle}>${this.inputData?.subTitle}</p>
                 </header>
 
-                <div class="chart-container ${this?.inputData?.axis?.columnLayout ? 'columnLayout' : ''}">
-                    ${repeat(
-                        [...this.canvasList.entries()].sort(),
-                        ([chartName, chartM]) => chartName,
-                        ([chartName]) => html`
-                            <div class="sizer">
-                                <canvas name="${chartName}"></canvas>
-                            </div>
-                        `
-                    )}
-                </div>
+                <div
+                    class="chart-container ${this?.inputData?.axis?.columnLayout ? 'columnLayout' : ''}"
+                ></div>
             </div>
         `
     }
