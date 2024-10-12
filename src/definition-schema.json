@@ -21,22 +21,26 @@
                     "title": "Timeseries Chart",
                     "description": "This will apply a proper time series x-Axis. Check if your x-values are timestamps.",
                     "type": "boolean",
+                    "dataDrivenDisabled": true,
                     "order": 3
                 },
                 "xAxisLabel": {
                     "title": "X-Axis Label",
                     "type": "string",
+                    "dataDrivenDisabled": true,
                     "order": 4
                 },
                 "yAxisLabel": {
                     "title": "Y-Axis Label",
                     "type": "string",
+                    "dataDrivenDisabled": true,
                     "order": 5
                 },
                 "columnLayout": {
                     "title": "Vertical Layout",
                     "description": "When multiple charts are drawn, then they will be layed out horizontically or vertically.",
                     "type": "boolean",
+                    "dataDrivenDisabled": true,
                     "order": 6
                 }
             }
@@ -44,6 +48,7 @@
         "dataseries": {
             "title": "Dataseries",
             "type": "array",
+            "dataDrivenDisabled": true,
             "order": 4,
             "items": {
                 "type": "object",
@@ -60,6 +65,7 @@
                         "type": "string",
                         "enum": ["bar", "line", "bubble"],
                         "required": true,
+                        "dataDrivenDisabled": true,
                         "order": 2
                     },
                     "backgroundColor": {
@@ -85,18 +91,21 @@
                                 "title": "Line Area Fill",
                                 "description": "Check this box to turn a line chart into an area chart.",
                                 "type": "boolean",
+                                "dataDrivenDisabled": true,
                                 "order": 1
                             },
                             "borderWidth": {
                                 "title": "Line Width",
                                 "description": "In case of Drawing Type 'bar' this determines the bar's border line width.",
                                 "type": "number",
+                                "dataDrivenDisabled": true,
                                 "order": 2
                             },
                             "borderDash": {
                                 "title": "Line Dash Style",
                                 "description": "Specify dash length and space-between-dashes length like this: [10, 5].",
                                 "type": "string",
+                                "dataDrivenDisabled": true,
                                 "order": 3
                             },
                             "radius": {
@@ -135,12 +144,14 @@
                                 "title": "Draw Order",
                                 "description": "Determines the draw order of the series. Dataseries with lower numbers are drawn on top of ones with higher numbers.",
                                 "type": "number",
+                                "dataDrivenDisabled": true,
                                 "order": 2
                             },
                             "chartName": {
                                 "title": "Chart Name",
                                 "description": "If two dataseries have the same 'Chart Name', they will be drawn in the same chart. Otherwise they will get their own chart. If the name contains #split# as substring then a separat chart will be drawn for each split dataseries.",
                                 "type": "string",
+                                "dataDrivenDisabled": true,
                                 "order": 3
                             }
                         }
