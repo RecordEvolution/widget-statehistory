@@ -11,13 +11,14 @@ import { InputData } from './definition-schema.js'
 
 type Dataseries = Exclude<InputData['dataseries'], undefined>[number]
 type Data = Exclude<Dataseries['data'], undefined>[number]
+type ChartCombination = { chartJsInstance?: Chart; dataSets: ChartDataset[] }
 
 export class WidgetLinechart extends LitElement {
     @property({ type: Object })
     inputData?: InputData
 
     @state()
-    private canvasList: Map<string, { chart?: any; dataSets: Dataseries[] }> = new Map()
+    private canvasList: Map<string, ChartCombination> = new Map()
 
     version: string = 'versionplaceholder'
     chartContainer?: HTMLElement | DocumentFragment
@@ -90,7 +91,11 @@ export class WidgetLinechart extends LitElement {
 
                 if (!this.canvasList.has(chartName)) {
                     // initialize new charts
-                    this.canvasList.set(chartName, { chart: undefined, dataSets: [] as Dataseries[] })
+                    this.canvasList.set(chartName, {
+                        chartJsInstance: undefined,
+                        // @ts-ignore
+                        dataSets: [] as Dataseries[]
+                    })
                 }
                 this.canvasList.get(chartName)?.dataSets.push(pds)
             })
@@ -100,19 +105,28 @@ export class WidgetLinechart extends LitElement {
         // console.log('new linechart datasets', this.canvasList)
     }
 
-    applyInputData() {
+    async applyInputData() {
         this.setupCharts()
 
         this.requestUpdate()
-        this.canvasList.forEach(({ chart, dataSets }) => {
-            if (chart) {
-                chart.data.datasets = dataSets
-                chart.options.scales.x.type = this.xAxisType()
-                chart.options.scales.x.title.display = !!this.inputData?.axis?.xAxisLabel
-                chart.options.scales.x.title.text = this.inputData?.axis?.xAxisLabel
-                chart.options.scales.y.title.display = !!this.inputData?.axis?.yAxisLabel
-                chart.options.scales.y.title.text = this.inputData?.axis?.yAxisLabel
-                chart?.update('resize')
+        await this.updateComplete
+        this.canvasList.forEach(({ chartJsInstance, dataSets }) => {
+            if (chartJsInstance) {
+                chartJsInstance.data.datasets = dataSets
+                chartJsInstance.options ??= {}
+                chartJsInstance.options.scales ??= {}
+                chartJsInstance.options.scales.x ??= {}
+                chartJsInstance.options.scales.y ??= {}
+                chartJsInstance.options.scales.x.type = this.xAxisType()
+                // @ts-ignore
+                chartJsInstance.options.scales.x.title.display = !!this.inputData?.axis?.xAxisLabel
+                // @ts-ignore
+                chartJsInstance.options.scales.x.title.text = this.inputData?.axis?.xAxisLabel
+                // @ts-ignore
+                chartJsInstance.options.scales.y.title.display = !!this.inputData?.axis?.yAxisLabel
+                // @ts-ignore
+                chartJsInstance.options.scales.y.title.text = this.inputData?.axis?.yAxisLabel
+                chartJsInstance?.update('resize')
             }
         })
     }
@@ -131,7 +145,7 @@ export class WidgetLinechart extends LitElement {
                 this.canvasList.delete(chartName)
                 return
             }
-            if (chartM.chart) return
+            if (chartM.chartJsInstance) return
 
             if (!this.chartContainer) throw new Error('chartContainer not found')
 
@@ -145,7 +159,7 @@ export class WidgetLinechart extends LitElement {
 
             if (!canvas) throw new Error('canvas not found')
             // console.log('chartM', canvas, chartM.chart)
-            chartM.chart = new Chart(canvas, {
+            chartM.chartJsInstance = new Chart(canvas, {
                 type: 'line',
                 data: {
                     // @ts-ignore
@@ -242,6 +256,17 @@ export class WidgetLinechart extends LitElement {
             font-size: 14px;
             line-height: 17px;
         }
+
+        .no-data {
+            font-size: 20px;
+            color: var(--re-text-color, #000);
+            display: flex;
+            height: 100%;
+            width: 100%;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+        }
     `
 
     render() {
@@ -252,6 +277,7 @@ export class WidgetLinechart extends LitElement {
                     <p class="paging" ?active=${this.inputData?.subTitle}>${this.inputData?.subTitle}</p>
                 </header>
 
+                <div class="paging no-data" ?active=${!this.canvasList.size}>No Data</div>
                 <div
                     class="chart-container ${this?.inputData?.axis?.columnLayout ? 'columnLayout' : ''}"
                 ></div>

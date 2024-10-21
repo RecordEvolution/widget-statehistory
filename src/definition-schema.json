@@ -161,7 +161,6 @@
                         "description": "The data used to draw this data series.",
                         "type": "array",
                         "order": 5,
-                        "buffersize": 1000,
                         "items": {
                             "type": "object",
                             "properties": {
