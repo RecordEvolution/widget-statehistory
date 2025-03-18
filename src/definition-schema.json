@@ -27,13 +27,13 @@
                 "xAxisLabel": {
                     "title": "X-Axis Label",
                     "type": "string",
-                    "dataDrivenDisabled": true,
+                    "dataDrivenDisabled": false,
                     "order": 4
                 },
                 "yAxisLabel": {
                     "title": "Y-Axis Label",
                     "type": "string",
-                    "dataDrivenDisabled": true,
+                    "dataDrivenDisabled": false,
                     "order": 5
                 },
                 "columnLayout": {
