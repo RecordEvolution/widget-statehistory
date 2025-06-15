@@ -23,7 +23,7 @@ export default {
     plugins: [
         replace({
             'process.env.NODE_ENV': JSON.stringify('production'),
-            versionplaceholder: process.env.ENV === 'PROD' ? npmPackage.version : 'versionplaceholder',
+            versionplaceholder: npmPackage.version,
             preventAssignment: true
         }),
         typescript({ sourceMap: true }),

@@ -15,7 +15,6 @@
             "type": "scatter",
 
             "styling": {
-                "radius": 4,
                 "borderWidth": 2,
                 "fill": false
             },
@@ -47,7 +46,6 @@
 
             "styling": {
                 "borderWidth": 2,
-                "radius": 4,
                 "pointStyle": "circle",
                 "fill": false
             },
@@ -80,7 +78,6 @@
                 "fill": false,
                 "borderWidth": 2,
                 "borderDash": "dotted",
-                "radius": 7,
                 "pointStyle": "circle"
             },
 

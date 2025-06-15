@@ -42,7 +42,7 @@ export class WidgetLinechart extends LitElement {
     themeObject?: any
 
     @property({ type: String })
-    themeName: string = 'light'
+    themeName?: string
 
     @state()
     private canvasList: Map<
@@ -51,10 +51,10 @@ export class WidgetLinechart extends LitElement {
     > = new Map()
 
     @state()
-    private themeBgColor: string = '#fff'
+    private themeBgColor?: string
 
     @state()
-    private themeColor: string = '#000'
+    private themeColor?: string
 
     boxes?: HTMLDivElement[]
     origWidth: number = 0
@@ -167,10 +167,11 @@ export class WidgetLinechart extends LitElement {
         }
 
         if (changedProperties.has('themeObject')) {
-            this.registerTheme(this.themeObject)
+            this.registerTheme(this.themeName, this.themeObject)
         }
 
         if (changedProperties.has('themeName')) {
+            this.registerTheme(this.themeName, this.themeObject)
             this.deleteCharts()
             this.transformData()
             this.applyData()
@@ -193,12 +194,10 @@ export class WidgetLinechart extends LitElement {
         }
     }
 
-    registerTheme(themeObject: any) {
-        if (!themeObject) return
-        if (typeof themeObject === 'string') {
-            return
-        }
-        echarts.registerTheme(this.themeName, this.themeObject)
+    registerTheme(themeName?: string, themeObject?: any) {
+        if (!themeObject || !themeName) return
+
+        echarts.registerTheme(themeName, this.themeObject)
     }
 
     transformData() {
@@ -253,11 +252,11 @@ export class WidgetLinechart extends LitElement {
                     },
                     areaStyle: { color: ds.styling?.fill ? fillColor : 'transparent' },
                     symbol: ds.styling?.pointStyle ?? 'circle',
-                    symbolSize: ds.styling?.radius ?? 4,
+                    symbolSize: (data) => data[2] ?? 4,
                     showSymbol: ds.styling?.pointStyle === 'none' ? false : true,
                     data: data2 ?? []
                 }
-                if (ds.type === 'scatter') (pds as ScatterSeriesOption).symbolSize = (data) => data[2]
+                // if (ds.type === 'scatter') (pds as ScatterSeriesOption).symbolSize = (data) => data[2]
 
                 let chartName = ds.advanced?.chartName ?? ''
                 if (chartName.includes('#split#')) {
@@ -316,7 +315,6 @@ export class WidgetLinechart extends LitElement {
             for (const ds of chart.series) {
                 option.series.push(ds)
             }
-            console.log('Applying data to chart', label, option)
             chart.echart?.setOption(option)
         })
     }
@@ -350,9 +348,9 @@ export class WidgetLinechart extends LitElement {
         const chart = { echart: newChart, series: [] as SeriesOption[], element: newContainer }
         this.canvasList.set(label, chart)
         //@ts-ignore
-        this.themeBgColor = newChart._theme?.backgroundColor ?? '#fff'
+        this.themeBgColor = newChart._theme?.backgroundColor
         //@ts-ignore
-        this.themeColor = newChart._theme?.title?.textStyle?.color ?? '#000'
+        this.themeColor = newChart._theme?.title?.textStyle?.color
         return chart
     }
 

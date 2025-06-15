@@ -5,7 +5,7 @@ This webcomponent follows the [open-wc](https://github.com/open-wc/open-wc) reco
 ## Installation
 
 ```bash
-npm i widget-linechart
+npm i @record-evolution/widget-linechart
 ```
 
 ## Usage
@@ -15,7 +15,7 @@ npm i widget-linechart
     import 'widget-linechart/widget-linechart.js'
 </script>
 
-<widget-linechart></widget-linechart>
+<widget-linechart-1.7.0></widget-linechart-1.7.0>
 ```
 
 ## Expected data format

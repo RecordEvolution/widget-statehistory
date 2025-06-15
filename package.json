@@ -3,7 +3,7 @@
     "description": "Webcomponent widget-linechart following open-wc recommendations",
     "license": "MIT",
     "author": "widget-linechart",
-    "version": "1.5.6",
+    "version": "1.6.0",
     "type": "module",
     "main": "dist/widget-linechart.js",
     "types": "dist/src/widget-linechart.d.ts",
@@ -14,7 +14,7 @@
     "scripts": {
         "analyze": "cem analyze --litelement",
         "start": "concurrently -k -r \"npm run watch\" \"wds\"",
-        "link": "npm link && cd ../RESWARM/frontend && npm link @record-evolution/widget-linechart",
+        "link": "ENV='PROD' npm run build && npm link && cd ../RESWARM/frontend && npm link @record-evolution/widget-linechart",
         "unlink": "npm unlink --global && cd ../RESWARM/frontend && npm unlink @record-evolution/widget-linechart && npm i @record-evolution/widget-linechart",
         "build": "rollup -c rollup.config.js",
         "watch": "rollup -w -c rollup.config.js",

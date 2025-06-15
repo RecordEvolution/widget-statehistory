@@ -123,13 +123,6 @@
                                 "dataDrivenDisabled": true,
                                 "order": 3
                             },
-                            "radius": {
-                                "title": "Symbol Size",
-                                "description": "Size of the value symbols in the chart. Valid only for Scatter and Line Chart types.",
-                                "type": "number",
-                                "minimum": 1,
-                                "order": 4
-                            },
                             "pointStyle": {
                                 "title": "Symbol Style",
                                 "type": "string",
@@ -191,8 +184,8 @@
                                     "required": true
                                 },
                                 "r": {
-                                    "title": "Point Radius",
-                                    "description": "Valid only for Bubble Chart type.",
+                                    "title": "Bubble Size",
+                                    "description": "Valid only for Scatter Chart type.",
                                     "order": 3,
                                     "type": "number"
                                 },
