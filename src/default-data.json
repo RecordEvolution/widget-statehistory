@@ -13,14 +13,12 @@
         {
             "label": "Demo Bubble",
             "type": "scatter",
-
             "styling": {
                 "borderWidth": 2,
                 "fill": false
             },
             "advanced": {
-                "drawOrder": 1,
-                "chartName": "Demo Bubble Chart"
+                "drawOrder": 1
             },
             "data": [
                 {
@@ -43,7 +41,6 @@
         {
             "label": "Demo Bar",
             "type": "bar",
-
             "styling": {
                 "borderWidth": 2,
                 "pointStyle": "circle",

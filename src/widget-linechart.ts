@@ -101,17 +101,12 @@ export class WidgetLinechart extends LitElement {
                     // start: 30,
                     // end: 70,
                     xAxisIndex: [0, 1]
-                },
-                {
-                    show: false,
-                    realtime: true,
-                    // start: 30,
-                    // end: 70,
-                    yAxisIndex: [0, 1]
                 }
             ],
             xAxis: {
                 type: 'value', // value, time, log, category
+                name: 'Time',
+                nameGap: 25,
                 nameLocation: 'middle',
                 axisLine: {
                     lineStyle: {
@@ -125,6 +120,8 @@ export class WidgetLinechart extends LitElement {
             yAxis: {
                 type: 'value',
                 nameLocation: 'middle',
+                name: 'Temperature (°C)',
+                nameGap: 25,
                 axisLabel: {
                     fontSize: 14
                 },
@@ -142,7 +139,8 @@ export class WidgetLinechart extends LitElement {
                     symbolSize: 8,
                     lineStyle: {
                         width: 2,
-                        type: 'solid'
+                        type: 'solid',
+                        color: 'green'
                     },
                     data: [10, 11, 13, 11, 12, 12, 9]
                 } as SeriesOption,
@@ -228,12 +226,16 @@ export class WidgetLinechart extends LitElement {
                 const prefix = piv ?? ''
                 const label = ds.label ?? ''
                 const name = prefix + (!!prefix && !!label ? ' - ' : '') + label
-                const lineColor = ds.advanced?.chartName?.includes('#split#')
-                    ? ds.borderColor
-                    : derivedBdColors[i]
-                const fillColor = ds.advanced?.chartName?.includes('#split#')
-                    ? ds.backgroundColor
-                    : derivedBgColors[i]
+                const lineColor = ds.borderColor
+                    ? ds.advanced?.chartName?.includes('#split#')
+                        ? ds.borderColor
+                        : derivedBdColors[i]
+                    : undefined
+                const fillColor = ds.backgroundColor
+                    ? ds.advanced?.chartName?.includes('#split#')
+                        ? ds.backgroundColor
+                        : derivedBgColors[i]
+                    : undefined
                 const data = distincts.length === 1 ? ds.data : ds.data?.filter((d) => d.pivot === piv)
                 const data2 = this.inputData?.axis?.timeseries
                     ? data?.map((d) =>
@@ -247,6 +249,13 @@ export class WidgetLinechart extends LitElement {
                     lineStyle: {
                         color: lineColor,
                         width: ds.styling?.borderWidth ?? 2,
+                        // @ts-ignore
+                        type: ds.styling?.borderDash ?? 'solid'
+                    },
+                    itemStyle: {
+                        color: fillColor,
+                        borderColor: lineColor,
+                        borderWidth: ds.styling?.borderWidth ?? 2,
                         // @ts-ignore
                         type: ds.styling?.borderDash ?? 'solid'
                     },
@@ -298,7 +307,6 @@ export class WidgetLinechart extends LitElement {
 
             // Axis
             option.xAxis.name = this.inputData?.axis?.xAxisLabel ?? ''
-            option.xAxis.nameGap = 30 * modifier
             option.dataZoom[0].show = this.inputData?.axis?.xAxisZoom ?? false
             option.toolbox.show = this.inputData?.axis?.xAxisZoom ?? false
             // option.xAxis.axisLine.lineStyle.width = 2 * modifier
@@ -306,15 +314,14 @@ export class WidgetLinechart extends LitElement {
             option.xAxis.type = this.xAxisType()
 
             option.yAxis.name = this.inputData?.axis?.yAxisLabel ?? ''
-            option.yAxis.nameGap = 30 * modifier
             // option.yAxis.axisLine.lineStyle.width = 2 * modifier
             // option.yAxis.axisLabel.fontSize = 20 * modifier
             option.yAxis.scale = this.inputData?.axis?.yAxisScaling ?? false
 
-            option.series = []
-            for (const ds of chart.series) {
-                option.series.push(ds)
-            }
+            option.series = chart.series
+
+            if (chart.series.length <= 1) option.legend.show = false
+
             chart.echart?.setOption(option)
         })
     }
