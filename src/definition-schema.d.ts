@@ -12,7 +12,15 @@ export type Subtitle = string;
  */
 export type TimeseriesChart = boolean;
 export type XAxisLabel = string;
+/**
+ * If checked, a zoom tool will be shown on the x-axis to zoom into the chart.
+ */
+export type XAxisZoomTool = boolean;
 export type YAxisLabel = string;
+/**
+ * If checked, the Y-Axis will be scaled to the data range. If not checked, the Y-Axis will always start at 0.
+ */
+export type YAxisScaling = boolean;
 /**
  * When multiple charts are drawn, then they will be layed out horizontically or vertically.
  */
@@ -21,36 +29,19 @@ export type VerticalLayout = boolean;
  * The name for this data series
  */
 export type Label = string;
-export type DrawingStyle = "bar" | "line" | "bubble";
+export type DrawingStyle = "bar" | "line" | "scatter";
 /**
  * Check this box to turn a line chart into an area chart.
  */
 export type LineAreaFill = boolean;
 /**
- * In case of Drawing Type 'bar' this determines the bar's border line width.
+ * Width of the lines in the chart.
  */
 export type LineWidth = number;
+export type LineDashStyle = "solid" | "dashed" | "dotted";
+export type SymbolStyle = "circle" | "rect" | "roundRect" | "triangle" | "diamond" | "pin" | "arrow" | "none";
 /**
- * Specify dash length and space-between-dashes length like this: [10, 5].
- */
-export type LineDashStyle = string;
-/**
- * To disable points, set this to 0.
- */
-export type PointRadius = number;
-export type PointStyle =
-  | "circle"
-  | "cross"
-  | "crossRot"
-  | "dash"
-  | "line"
-  | "rect"
-  | "rectRounded"
-  | "rectRot"
-  | "star"
-  | "triangle";
-/**
- * Determines the draw order of the series. Dataseries with lower numbers are drawn on top of ones with higher numbers.
+ * Determines the draw order of the series. Dataseries with lower numbers are drawn on top of ones with higher numbers within one chart.
  */
 export type DrawOrder = number;
 /**
@@ -63,9 +54,9 @@ export type ChartName = string;
 export type XValue = string;
 export type YValue = number;
 /**
- * Valid only for Bubble Chart type.
+ * Valid only for Scatter Chart type.
  */
-export type PointRadius1 = number;
+export type BubbleSize = number;
 /**
  * You can specify a column in the input data to autogenerate dataseries for each distinct entry in this column. E.g. if you have a table with columns [city, timestamp, temperature] and specify 'city' as split column, then you will get a line for each city.
  */
@@ -74,56 +65,57 @@ export type SplitDataBy = string;
  * The data used to draw this data series.
  */
 export type Data = {
-  x?: XValue;
-  y?: YValue;
-  r?: PointRadius1;
-  pivot?: SplitDataBy;
-  [k: string]: unknown;
+    x?: XValue;
+    y?: YValue;
+    r?: BubbleSize;
+    pivot?: SplitDataBy;
+    [k: string]: unknown;
 }[];
 export type Dataseries = {
-  label?: Label;
-  type?: DrawingStyle;
-  backgroundColor?: FillColor;
-  borderColor?: LineColor;
-  styling?: Styling;
-  advanced?: AdvancedSettings;
-  data?: Data;
-  [k: string]: unknown;
+    label?: Label;
+    type?: DrawingStyle;
+    backgroundColor?: FillColor;
+    borderColor?: LineColor;
+    styling?: Styling;
+    advanced?: AdvancedSettings;
+    data?: Data;
+    [k: string]: unknown;
 }[];
 
 export interface InputData {
-  title?: Title;
-  subTitle?: Subtitle;
-  axis?: AxisSettings;
-  dataseries?: Dataseries;
-  [k: string]: unknown;
+    title?: Title;
+    subTitle?: Subtitle;
+    axis?: AxisSettings;
+    dataseries?: Dataseries;
+    [k: string]: unknown;
 }
 export interface AxisSettings {
-  timeseries?: TimeseriesChart;
-  xAxisLabel?: XAxisLabel;
-  yAxisLabel?: YAxisLabel;
-  columnLayout?: VerticalLayout;
-  [k: string]: unknown;
+    timeseries?: TimeseriesChart;
+    xAxisLabel?: XAxisLabel;
+    xAxisZoom?: XAxisZoomTool;
+    yAxisLabel?: YAxisLabel;
+    yAxisScaling?: YAxisScaling;
+    columnLayout?: VerticalLayout;
+    [k: string]: unknown;
 }
 /**
  * The inner color of the bars if you chose Drawing Type 'bar' or the inner colors of the points if you chose Drawing Type 'line'.
  */
 export interface FillColor {
-  [k: string]: unknown;
+    [k: string]: unknown;
 }
 export interface LineColor {
-  [k: string]: unknown;
+    [k: string]: unknown;
 }
 export interface Styling {
-  fill?: LineAreaFill;
-  borderWidth?: LineWidth;
-  borderDash?: LineDashStyle;
-  radius?: PointRadius;
-  pointStyle?: PointStyle;
-  [k: string]: unknown;
+    fill?: LineAreaFill;
+    borderWidth?: LineWidth;
+    borderDash?: LineDashStyle;
+    pointStyle?: SymbolStyle;
+    [k: string]: unknown;
 }
 export interface AdvancedSettings {
-  drawOrder?: DrawOrder;
-  chartName?: ChartName;
-  [k: string]: unknown;
+    drawOrder?: DrawOrder;
+    chartName?: ChartName;
+    [k: string]: unknown;
 }

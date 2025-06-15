@@ -1,44 +1,50 @@
 <!doctype html>
 <html lang="en-GB">
-<head>
-  <meta charset="utf-8">
-  <title>Linechart</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-    }
-    * {
-      width: 100%;
-      height: 100%;
-    }
-  </style>
-</head>
-<body>
-  <div id="demo"></div>
+    <head>
+        <meta charset="utf-8" />
+        <title>Linechart</title>
+        <style>
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                background-color: aliceblue;
+            }
+            * {
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="demo"></div>
 
-  <script src="https://storage.googleapis.com/reswarm-images/ObjectRandomizer.js"></script>
-  
-  <script type="module">
-    import { html, render } from 'lit';
-    import '../dist/src/widget-linechart.js';
-    const response = await fetch('../src/default-data.json');
-    const data = await response.json();
-    const keyPathsToRandomize = ['dataseries.0.data.0.y', 'title'];
-    setInterval(() => {
-      const randomizedObj = randomizeObjectValues(data, keyPathsToRandomize);
+        <script src="https://storage.googleapis.com/reswarm-images/ObjectRandomizer.js"></script>
 
-      render(
-        html`
-          <widget-linechart-versionplaceholder .inputData=${randomizedObj}>
-            some light-dom
-          </widget-linechart-versionplaceholder>
-        `,
-        document.querySelector('#demo')
-      )}
-      , 1000)
-  </script>
-</body>
+        <script type="module">
+            import { html, render } from 'lit'
+            import '../dist/widget-linechart.js'
+            const data = await fetch('../src/default-data.json').then((res) => res.json())
+            const themeObject = await fetch('themes/vintage.json').then((res) => res.json())
+
+            render(
+                html`
+                    <widget-linechart-1.6.0 .themeObject="${themeObject}" .inputData=${data}>
+                        web component is not registered. Make sure to use the tag with the correct version string from the package.json
+                    </widget-linechart-1.6.0>
+                `,
+                document.querySelector('#demo')
+            )
+
+            const widget = document.getElementById('demo').children[0]
+            const keyPathsToRandomize = ['dataseries.0.data.0.y', 'title', 'dataseries.2.data.2.y']
+
+            setInterval(() => {
+                const randomizedObj = randomizeObjectValues(data, keyPathsToRandomize)
+                widget.inputData = randomizedObj
+            }, 1000)
+        </script>
+    </body>
 </html>

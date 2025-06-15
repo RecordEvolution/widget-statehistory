@@ -16,12 +16,13 @@ export default {
     output: {
         dir: './dist',
         sourcemap: true,
-        name: 'widget-linechart_bundle',
+        name: 'widget-linechart-bundle',
         banner: `/* @license Copyright (c) 2023 Record Evolution GmbH. All rights reserved.*/`,
         format: 'esm'
     },
     plugins: [
         replace({
+            'process.env.NODE_ENV': JSON.stringify('production'),
             versionplaceholder: npmPackage.version,
             preventAssignment: true
         }),
