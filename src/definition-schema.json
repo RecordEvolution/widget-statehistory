@@ -30,18 +30,32 @@
                     "dataDrivenDisabled": false,
                     "order": 4
                 },
+                "xAxisZoom": {
+                    "title": "X-Axis Zoom Tool",
+                    "type": "boolean",
+                    "description": "If checked, a zoom tool will be shown on the x-axis to zoom into the chart.",
+                    "dataDrivenDisabled": true,
+                    "order": 5
+                },
                 "yAxisLabel": {
                     "title": "Y-Axis Label",
                     "type": "string",
                     "dataDrivenDisabled": false,
-                    "order": 5
+                    "order": 6
+                },
+                "yAxisScaling": {
+                    "title": "Y-Axis Scaling",
+                    "description": "If checked, the Y-Axis will be scaled to the data range. If not checked, the Y-Axis will always start at 0.",
+                    "type": "boolean",
+                    "dataDrivenDisabled": true,
+                    "order": 7
                 },
                 "columnLayout": {
                     "title": "Vertical Layout",
                     "description": "When multiple charts are drawn, then they will be layed out horizontically or vertically.",
                     "type": "boolean",
                     "dataDrivenDisabled": true,
-                    "order": 6
+                    "order": 8
                 }
             }
         },
@@ -63,7 +77,7 @@
                     "type": {
                         "title": "Drawing Style",
                         "type": "string",
-                        "enum": ["bar", "line", "bubble"],
+                        "enum": ["bar", "line", "scatter"],
                         "required": true,
                         "dataDrivenDisabled": true,
                         "order": 2
@@ -96,39 +110,38 @@
                             },
                             "borderWidth": {
                                 "title": "Line Width",
-                                "description": "In case of Drawing Type 'bar' this determines the bar's border line width.",
+                                "description": "Width of the lines in the chart.",
                                 "type": "number",
                                 "dataDrivenDisabled": true,
                                 "order": 2
                             },
                             "borderDash": {
                                 "title": "Line Dash Style",
-                                "description": "Specify dash length and space-between-dashes length like this: [10, 5].",
+                                "description": "",
                                 "type": "string",
+                                "enum": ["solid", "dashed", "dotted"],
                                 "dataDrivenDisabled": true,
                                 "order": 3
                             },
                             "radius": {
-                                "title": "Point Radius",
-                                "description": "To disable points, set this to 0.",
+                                "title": "Symbol Size",
+                                "description": "Size of the value symbols in the chart. Valid only for Scatter and Line Chart types.",
                                 "type": "number",
-                                "minimum": 0,
+                                "minimum": 1,
                                 "order": 4
                             },
                             "pointStyle": {
-                                "title": "Point Style",
+                                "title": "Symbol Style",
                                 "type": "string",
                                 "enum": [
                                     "circle",
-                                    "cross",
-                                    "crossRot",
-                                    "dash",
-                                    "line",
                                     "rect",
-                                    "rectRounded",
-                                    "rectRot",
-                                    "star",
-                                    "triangle"
+                                    "roundRect",
+                                    "triangle",
+                                    "diamond",
+                                    "pin",
+                                    "arrow",
+                                    "none"
                                 ],
                                 "order": 5
                             }
@@ -142,7 +155,7 @@
                         "properties": {
                             "drawOrder": {
                                 "title": "Draw Order",
-                                "description": "Determines the draw order of the series. Dataseries with lower numbers are drawn on top of ones with higher numbers.",
+                                "description": "Determines the draw order of the series. Dataseries with lower numbers are drawn on top of ones with higher numbers within one chart.",
                                 "type": "number",
                                 "dataDrivenDisabled": true,
                                 "order": 2

@@ -1,29 +1,38 @@
 {
+    "title": "Demo Chart",
+    "subTitle": "This is a demo chart with multiple data series.",
     "axis": {
         "timeseries": true,
         "xAxisLabel": "Time",
+        "xAxisZoom": false,
         "yAxisLabel": "Temperature",
-        "columnLayout": false
+        "yAxisScaling": false,
+        "columnLayout": true
     },
     "dataseries": [
         {
             "label": "Demo Bubble",
-            "type": "bubble",
-            "backgroundColor": "#f47272",
-            "borderColor": "#147272",
+            "type": "scatter",
+
             "styling": {
                 "radius": 4,
                 "borderWidth": 2,
                 "fill": false
             },
             "advanced": {
-                "drawOrder": 1
+                "drawOrder": 1,
+                "chartName": "Demo Bubble Chart"
             },
             "data": [
                 {
                     "x": "2023-11-05T12:47:52.351152+00:00",
-                    "y": 20,
+                    "y": 40,
                     "r": 10
+                },
+                {
+                    "x": "2023-11-07T12:47:52.351152+00:00",
+                    "y": 40,
+                    "r": 70
                 },
                 {
                     "x": "2023-11-11T22:47:52.351152+00:00",
@@ -35,12 +44,11 @@
         {
             "label": "Demo Bar",
             "type": "bar",
-            "backgroundColor": "#F5D7BB",
-            "borderColor": "#F9A076",
+
             "styling": {
                 "borderWidth": 2,
                 "radius": 4,
-                "pointStyle": "rectRounded",
+                "pointStyle": "circle",
                 "fill": false
             },
             "advanced": {
@@ -71,12 +79,11 @@
             "styling": {
                 "fill": false,
                 "borderWidth": 2,
-                "borderDash": "5, 5",
+                "borderDash": "dotted",
                 "radius": 7,
-                "pointStyle": "rectRounded"
+                "pointStyle": "circle"
             },
-            "backgroundColor": "#AFF6F9",
-            "borderColor": "#47BBF5bb",
+
             "advanced": {
                 "drawOrder": 3
             },

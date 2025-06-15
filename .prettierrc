@@ -1,12 +1,9 @@
 {
-	"singleQuote": true,
-	"printWidth": 110,
-	"editor.formatOnSave": true,
-	"tabWidth": 4,
-	"requireConfig": false,
-	"useTabs": false,
-	"trailingComma": "none",
-	"bracketSpacing": true,
-	"jsxBracketSameLine": false,
-	"semi": false
-  }
+    "singleQuote": true,
+    "printWidth": 110,
+    "tabWidth": 4,
+    "useTabs": false,
+    "trailingComma": "none",
+    "bracketSpacing": true,
+    "semi": false
+}

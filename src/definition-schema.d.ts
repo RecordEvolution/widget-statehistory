@@ -5,125 +5,120 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type Title = string;
-export type Subtitle = string;
+export type Title = string
+export type Subtitle = string
 /**
  * This will apply a proper time series x-Axis. Check if your x-values are timestamps.
  */
-export type TimeseriesChart = boolean;
-export type XAxisLabel = string;
-export type YAxisLabel = string;
+export type TimeseriesChart = boolean
+export type XAxisLabel = string
+export type YAxisLabel = string
+/**
+ * If checked, the Y-Axis will be scaled to the data range. If not checked, the Y-Axis will always start at 0.
+ */
+export type YAxisScaling = boolean
 /**
  * When multiple charts are drawn, then they will be layed out horizontically or vertically.
  */
-export type VerticalLayout = boolean;
+export type VerticalLayout = boolean
 /**
  * The name for this data series
  */
-export type Label = string;
-export type DrawingStyle = "bar" | "line" | "bubble";
+export type Label = string
+export type DrawingStyle = 'bar' | 'line' | 'scatter'
 /**
  * Check this box to turn a line chart into an area chart.
  */
-export type LineAreaFill = boolean;
+export type LineAreaFill = boolean
 /**
  * In case of Drawing Type 'bar' this determines the bar's border line width.
  */
-export type LineWidth = number;
+export type LineWidth = number
 /**
  * Specify dash length and space-between-dashes length like this: [10, 5].
  */
-export type LineDashStyle = string;
+export type LineDashStyle = 'solid' | 'dashed' | 'dotted'
 /**
- * To disable points, set this to 0.
+ * Size of the value symbols in the chart. Valid only for Scatter and Line Chart types.
  */
-export type PointRadius = number;
-export type PointStyle =
-  | "circle"
-  | "cross"
-  | "crossRot"
-  | "dash"
-  | "line"
-  | "rect"
-  | "rectRounded"
-  | "rectRot"
-  | "star"
-  | "triangle";
+export type SymbolSize = number
+export type PointStyle = 'circle' | 'rect' | 'roundRect' | 'triangle' | 'diamond' | 'pin' | 'arrow' | 'none'
 /**
  * Determines the draw order of the series. Dataseries with lower numbers are drawn on top of ones with higher numbers.
  */
-export type DrawOrder = number;
+export type DrawOrder = number
 /**
  * If two dataseries have the same 'Chart Name', they will be drawn in the same chart. Otherwise they will get their own chart. If the name contains #split# as substring then a separat chart will be drawn for each split dataseries.
  */
-export type ChartName = string;
+export type ChartName = string
 /**
  * If timeseries is checked in the settings, then this should be an ISO String date like 2023-11-04T22:47:52.351152+00:00. But this works with many other formats as well.
  */
-export type XValue = string;
-export type YValue = number;
+export type XValue = string
+export type YValue = number
 /**
  * Valid only for Bubble Chart type.
  */
-export type PointRadius1 = number;
+export type PointRadius = number
 /**
  * You can specify a column in the input data to autogenerate dataseries for each distinct entry in this column. E.g. if you have a table with columns [city, timestamp, temperature] and specify 'city' as split column, then you will get a line for each city.
  */
-export type SplitDataBy = string;
+export type SplitDataBy = string
 /**
  * The data used to draw this data series.
  */
 export type Data = {
-  x?: XValue;
-  y?: YValue;
-  r?: PointRadius1;
-  pivot?: SplitDataBy;
-  [k: string]: unknown;
-}[];
+    x?: XValue
+    y?: YValue
+    r?: PointRadius
+    pivot?: SplitDataBy
+    [k: string]: unknown
+}[]
 export type Dataseries = {
-  label?: Label;
-  type?: DrawingStyle;
-  backgroundColor?: FillColor;
-  borderColor?: LineColor;
-  styling?: Styling;
-  advanced?: AdvancedSettings;
-  data?: Data;
-  [k: string]: unknown;
-}[];
+    label?: Label
+    type?: DrawingStyle
+    backgroundColor?: FillColor
+    borderColor?: LineColor
+    styling?: Styling
+    advanced?: AdvancedSettings
+    data?: Data
+    [k: string]: unknown
+}[]
 
 export interface InputData {
-  title?: Title;
-  subTitle?: Subtitle;
-  axis?: AxisSettings;
-  dataseries?: Dataseries;
-  [k: string]: unknown;
+    title?: Title
+    subTitle?: Subtitle
+    axis?: AxisSettings
+    dataseries?: Dataseries
+    [k: string]: unknown
 }
 export interface AxisSettings {
-  timeseries?: TimeseriesChart;
-  xAxisLabel?: XAxisLabel;
-  yAxisLabel?: YAxisLabel;
-  columnLayout?: VerticalLayout;
-  [k: string]: unknown;
+    timeseries?: TimeseriesChart
+    xAxisLabel?: XAxisLabel
+    yAxisLabel?: YAxisLabel
+    yAxisScaling?: YAxisScaling
+    columnLayout?: VerticalLayout
+    [k: string]: unknown
 }
 /**
  * The inner color of the bars if you chose Drawing Type 'bar' or the inner colors of the points if you chose Drawing Type 'line'.
  */
 export interface FillColor {
-  [k: string]: unknown;
+    [k: string]: unknown
 }
 export interface LineColor {
-  [k: string]: unknown;
+    [k: string]: unknown
 }
 export interface Styling {
-  fill?: LineAreaFill;
-  borderWidth?: LineWidth;
-  borderDash?: LineDashStyle;
-  radius?: PointRadius;
-  pointStyle?: PointStyle;
-  [k: string]: unknown;
+    fill?: LineAreaFill
+    borderWidth?: LineWidth
+    borderDash?: LineDashStyle
+    radius?: SymbolSize
+    pointStyle?: PointStyle
+    [k: string]: unknown
 }
 export interface AdvancedSettings {
-  drawOrder?: DrawOrder;
-  chartName?: ChartName;
-  [k: string]: unknown;
+    drawOrder?: DrawOrder
+    chartName?: ChartName
+    [k: string]: unknown
 }

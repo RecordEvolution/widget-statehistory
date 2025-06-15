@@ -1,60 +1,223 @@
-import { html, css, LitElement } from 'lit'
-import { repeat } from 'lit/directives/repeat.js'
-import { property, state } from 'lit/decorators.js'
-import Chart, { ChartDataset } from 'chart.js/auto'
+import { html, css, LitElement, PropertyValueMap } from 'lit'
+import { customElement, property, state } from 'lit/decorators.js'
+
+import * as echarts from 'echarts/core'
+import {
+    TitleComponent,
+    ToolboxComponent,
+    TooltipComponent,
+    LegendComponent,
+    DataZoomComponent,
+    GridComponent
+} from 'echarts/components'
+import { LineChart, BarChart, ScatterChart } from 'echarts/charts'
+import { UniversalTransition } from 'echarts/features'
+import { CanvasRenderer } from 'echarts/renderers'
 import tinycolor, { ColorInput } from 'tinycolor2'
-// This does not work. See comments at the end of the file.
-// import 'chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm';
-// import 'chartjs-adapter-moment';
-// import 'chartjs-adapter-date-fns';
-import { InputData } from './definition-schema.js'
 
-type Dataseries = Exclude<InputData['dataseries'], undefined>[number]
-type Data = Exclude<Dataseries['data'], undefined>[number]
-type ChartCombination = { chartJsInstance?: Chart; dataSets: ChartDataset[] }
+echarts.use([
+    GridComponent,
+    TitleComponent,
+    ToolboxComponent,
+    TooltipComponent,
+    LegendComponent,
+    DataZoomComponent,
+    LineChart,
+    BarChart,
+    ScatterChart,
+    CanvasRenderer,
+    UniversalTransition
+])
 
+import { InputData } from './definition-schema'
+import { EChartsOption, ScatterSeriesOption, SeriesOption } from 'echarts'
+import { TitleOption } from 'echarts/types/dist/shared'
+
+@customElement('widget-linechart-versionplaceholder')
 export class WidgetLinechart extends LitElement {
     @property({ type: Object })
     inputData?: InputData
 
+    @property({ type: Object })
+    themeObject?: any
+
+    @property({ type: String })
+    themeName: string = 'light'
+
     @state()
-    private canvasList: Map<string, ChartCombination> = new Map()
+    private canvasList: Map<
+        string,
+        { echart?: echarts.ECharts; series: SeriesOption[]; doomed?: boolean; element?: HTMLDivElement }
+    > = new Map()
 
+    @state()
+    private themeBgColor: string = '#fff'
+
+    @state()
+    private themeColor: string = '#000'
+
+    boxes?: HTMLDivElement[]
+    origWidth: number = 0
+    origHeight: number = 0
+    template: EChartsOption
+    modifier: number = 1
     version: string = 'versionplaceholder'
-    chartContainer?: HTMLElement | DocumentFragment
+    chartContainer: HTMLDivElement | null | undefined
+    resizeObserver?: ResizeObserver
 
-    update(changedProperties: Map<string, any>) {
+    constructor() {
+        super()
+
+        this.template = {
+            title: {
+                text: 'Temperature Change in the Coming Week',
+                left: 'left',
+                textStyle: {
+                    fontSize: 14
+                }
+            } as TitleOption,
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                right: '10%',
+                top: '3%'
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    // dataZoom: {
+                    //     yAxisIndex: 'none'
+                    // },
+                    // dataView: { readOnly: false },
+                    restore: {}
+                    // saveAsImage: {}
+                }
+            },
+            dataZoom: [
+                {
+                    show: false,
+                    realtime: true,
+                    // start: 30,
+                    // end: 70,
+                    xAxisIndex: [0, 1]
+                },
+                {
+                    show: false,
+                    realtime: true,
+                    // start: 30,
+                    // end: 70,
+                    yAxisIndex: [0, 1]
+                }
+            ],
+            xAxis: {
+                type: 'value', // value, time, log, category
+                nameLocation: 'middle',
+                axisLine: {
+                    lineStyle: {
+                        width: undefined
+                    }
+                },
+                axisLabel: {
+                    fontSize: 14
+                }
+            },
+            yAxis: {
+                type: 'value',
+                nameLocation: 'middle',
+                axisLabel: {
+                    fontSize: 14
+                },
+                axisLine: {
+                    lineStyle: {
+                        width: undefined
+                    }
+                },
+                scale: false
+            },
+            series: [
+                {
+                    name: 'Highest',
+                    type: 'line',
+                    symbolSize: 8,
+                    lineStyle: {
+                        width: 2,
+                        type: 'solid'
+                    },
+                    data: [10, 11, 13, 11, 12, 12, 9]
+                } as SeriesOption,
+                {
+                    name: 'Lowest',
+                    type: 'line',
+                    symbolSize: 8,
+                    lineStyle: {
+                        width: 2,
+                        type: 'solid'
+                    },
+                    data: [1, -2, 2, 5, 3, 2, 0]
+                } as SeriesOption
+            ]
+        } as EChartsOption
+    }
+
+    update(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
         if (changedProperties.has('inputData') && this.chartContainer) {
-            this.transformInputData()
-            this.applyInputData()
+            this.transformData()
+            this.applyData()
+        }
+
+        if (changedProperties.has('themeObject')) {
+            this.registerTheme(this.themeObject)
+        }
+
+        if (changedProperties.has('themeName')) {
+            this.deleteCharts()
+            this.transformData()
+            this.applyData()
         }
         super.update(changedProperties)
     }
 
-    protected firstUpdated(): void {
-        this.chartContainer = this.shadowRoot?.querySelector('.chart-container') as HTMLElement
-        this.transformInputData()
-        this.applyInputData()
+    protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+        this.chartContainer = this.shadowRoot?.querySelector('.chart-container')
+        this.transformData()
+        this.applyData()
+        // Add ResizeObserver for chart container
+        if (this.chartContainer) {
+            this.resizeObserver = new ResizeObserver(() => {
+                this.canvasList.forEach((chart) => {
+                    chart.echart?.resize()
+                })
+            })
+            this.resizeObserver.observe(this.chartContainer)
+        }
     }
 
-    transformInputData() {
+    registerTheme(themeObject: any) {
+        if (!themeObject) return
+        if (typeof themeObject === 'string') {
+            return
+        }
+        echarts.registerTheme(this.themeName, this.themeObject)
+    }
+
+    transformData() {
         if (!this?.inputData?.dataseries?.length) return
 
         // reset all existing chart dataseries
-        this.canvasList.forEach((chartM) => (chartM.dataSets = []))
+        this.canvasList.forEach((chartM) => {
+            chartM.series = []
+            chartM.doomed = true
+        })
         this.inputData.dataseries.sort((a, b) => (a.advanced?.drawOrder ?? 0) - (b.advanced?.drawOrder ?? 0))
         this.inputData.dataseries.forEach((ds) => {
             ds.advanced ??= {}
             ds.advanced.chartName ??= ''
-            if (ds.borderDash && typeof ds.borderDash === 'string') {
-                ds.borderDash = JSON.parse(ds.borderDash)
-            } else {
-                ds.borderDash = undefined
-            }
+
             ds.data ??= []
 
             // pivot data
-            const distincts = [...new Set(ds.data.map((d: Data) => d.pivot))].sort()
+            const distincts = [...new Set(ds.data.map((d) => d.pivot))].sort()
             const derivedBgColors = tinycolor(ds.backgroundColor as ColorInput | undefined)
                 .monochromatic(distincts.length)
                 .map((c: any) => c.toHexString())
@@ -63,150 +226,151 @@ export class WidgetLinechart extends LitElement {
                 .map((c: any) => c.toHexString())
             //sd
             distincts.forEach((piv, i) => {
-                const prefix = piv ? `${piv} - ` : ''
-                const pds: any = {
-                    label: prefix + ds.label,
-                    type: ds.type,
-                    showLine: true,
-                    borderColor: ds.advanced?.chartName?.includes('#split#')
-                        ? ds.borderColor
-                        : derivedBdColors[i],
-                    backgroundColor: ds.advanced?.chartName?.includes('#split#')
-                        ? ds.backgroundColor
-                        : derivedBgColors[i],
-                    styling: ds.styling,
-                    pointStyle: ds.styling?.pointStyle,
-                    radius: ds.styling?.radius,
-                    fill: ds.styling?.fill,
-                    borderWidth: ds.styling?.borderWidth,
-                    borderDash: ds.borderDash,
-                    advanced: ds.advanced,
-                    data: distincts.length === 1 ? ds.data : ds.data?.filter((d) => d.pivot === piv)
+                const prefix = piv ?? ''
+                const label = ds.label ?? ''
+                const name = prefix + (!!prefix && !!label ? ' - ' : '') + label
+                const lineColor = ds.advanced?.chartName?.includes('#split#')
+                    ? ds.borderColor
+                    : derivedBdColors[i]
+                const fillColor = ds.advanced?.chartName?.includes('#split#')
+                    ? ds.backgroundColor
+                    : derivedBgColors[i]
+                const data = distincts.length === 1 ? ds.data : ds.data?.filter((d) => d.pivot === piv)
+                const data2 = this.inputData?.axis?.timeseries
+                    ? data?.map((d) =>
+                          d?.r !== undefined ? [new Date(d.x ?? ''), d.y, d.r] : [new Date(d.x ?? ''), d.y]
+                      )
+                    : data?.map((d) => (d?.r !== undefined ? [d.x, d.y, d.r] : [d.x, d.y]))
+
+                const pds: SeriesOption = {
+                    name: name,
+                    type: ds.type ?? 'line',
+                    lineStyle: {
+                        color: lineColor,
+                        width: ds.styling?.borderWidth ?? 2,
+                        // @ts-ignore
+                        type: ds.styling?.borderDash ?? 'solid'
+                    },
+                    areaStyle: { color: ds.styling?.fill ? fillColor : 'transparent' },
+                    symbol: ds.styling?.pointStyle ?? 'circle',
+                    symbolSize: ds.styling?.radius ?? 4,
+                    showSymbol: ds.styling?.pointStyle === 'none' ? false : true,
+                    data: data2 ?? []
                 }
+                if (ds.type === 'scatter') (pds as ScatterSeriesOption).symbolSize = (data) => data[2]
+
                 let chartName = ds.advanced?.chartName ?? ''
                 if (chartName.includes('#split#')) {
-                    chartName = prefix + chartName
+                    chartName = prefix + '-' + chartName
                 }
-                // If the chartName ends with :pivot: then create a seperate chart for each pivoted dataseries
 
-                if (!this.canvasList.has(chartName)) {
-                    // initialize new charts
-                    this.canvasList.set(chartName, {
-                        chartJsInstance: undefined,
-                        // @ts-ignore
-                        dataSets: [] as Dataseries[]
-                    })
-                }
-                this.canvasList.get(chartName)?.dataSets.push(pds)
+                const chart = this.setupChart(chartName)
+                chart?.series.push(pds)
             })
         })
-        // prevent duplicate transformation
-        // this.inputData.dataseries = []
-        // console.log('new linechart datasets', this.canvasList)
+
+        Array.from(this.canvasList.entries())
+            .filter(([l, c]) => c.doomed)
+            .forEach(([label, chart]) => {
+                chart.echart?.dispose()
+                chart.element?.remove()
+                this.canvasList.delete(label)
+            })
     }
 
-    async applyInputData() {
-        this.setupCharts()
-
-        this.requestUpdate()
-        await this.updateComplete
-        this.canvasList.forEach(({ chartJsInstance, dataSets }) => {
-            if (chartJsInstance) {
-                chartJsInstance.data.datasets = dataSets
-                chartJsInstance.options ??= {}
-                chartJsInstance.options.scales ??= {}
-                chartJsInstance.options.scales.x ??= {}
-                chartJsInstance.options.scales.y ??= {}
-                chartJsInstance.options.scales.x.type = this.xAxisType()
-                // @ts-ignore
-                chartJsInstance.options.scales.x.title.display = !!this.inputData?.axis?.xAxisLabel
-                // @ts-ignore
-                chartJsInstance.options.scales.x.title.text = this.inputData?.axis?.xAxisLabel
-                // @ts-ignore
-                chartJsInstance.options.scales.y.title.display = !!this.inputData?.axis?.yAxisLabel
-                // @ts-ignore
-                chartJsInstance.options.scales.y.title.text = this.inputData?.axis?.yAxisLabel
-                chartJsInstance?.update('resize')
-            }
-        })
-    }
-
-    xAxisType(): 'linear' | 'logarithmic' | 'category' | 'time' | 'timeseries' | undefined {
+    xAxisType(): 'value' | 'log' | 'category' | 'time' | undefined {
         if (this.inputData?.axis?.timeseries) return 'time'
         const onePoint = this.inputData?.dataseries?.[0]?.data?.[0]
-        if (!isNaN(Number(onePoint?.x))) return 'linear'
+        if (!isNaN(Number(onePoint?.x))) return 'value'
         return 'category'
     }
 
-    setupCharts() {
-        this.canvasList.forEach((chartM, chartName) => {
-            if (!chartM.dataSets.length) {
-                this.shadowRoot?.querySelector(`div[name="${chartName}"]`)?.remove()
-                this.canvasList.delete(chartName)
-                return
+    applyData() {
+        const modifier = 1
+
+        this.canvasList.forEach((chart, label) => {
+            chart.series.sort((a, b) => ((a.name as string) > (b.name as string) ? 1 : -1))
+            this.requestUpdate()
+
+            const option: any = window.structuredClone(this.template)
+            // Title
+            option.title.text = label
+            // option.title.textStyle.fontSize = 25 * modifier
+
+            // Axis
+            option.xAxis.name = this.inputData?.axis?.xAxisLabel ?? ''
+            option.xAxis.nameGap = 30 * modifier
+            option.dataZoom[0].show = this.inputData?.axis?.xAxisZoom ?? false
+            option.toolbox.show = this.inputData?.axis?.xAxisZoom ?? false
+            // option.xAxis.axisLine.lineStyle.width = 2 * modifier
+            // option.xAxis.axisLabel.fontSize = 20 * modifier
+            option.xAxis.type = this.xAxisType()
+
+            option.yAxis.name = this.inputData?.axis?.yAxisLabel ?? ''
+            option.yAxis.nameGap = 30 * modifier
+            // option.yAxis.axisLine.lineStyle.width = 2 * modifier
+            // option.yAxis.axisLabel.fontSize = 20 * modifier
+            option.yAxis.scale = this.inputData?.axis?.yAxisScaling ?? false
+
+            option.series = []
+            for (const ds of chart.series) {
+                option.series.push(ds)
             }
-            if (chartM.chartJsInstance) return
-
-            if (!this.chartContainer) throw new Error('chartContainer not found')
-
-            const newContainer = document.createElement('div')
-            newContainer.setAttribute('name', chartName)
-            newContainer.setAttribute('class', 'sizer')
-            const canvas = document.createElement('canvas')
-            canvas.setAttribute('name', chartName)
-            newContainer.appendChild(canvas)
-            this.chartContainer.appendChild(newContainer)
-
-            if (!canvas) throw new Error('canvas not found')
-            // console.log('chartM', canvas, chartM.chart)
-            chartM.chartJsInstance = new Chart(canvas, {
-                type: 'line',
-                data: {
-                    // @ts-ignore
-                    datasets: chartM.dataSets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animations: {
-                        colors: false,
-                        x: false
-                    },
-                    transitions: {
-                        active: {
-                            animation: {
-                                duration: 100
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            type: this.xAxisType(),
-                            title: {
-                                display: !!this.inputData?.axis?.xAxisLabel,
-                                text: this.inputData?.axis?.xAxisLabel
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: !!this.inputData?.axis?.yAxisLabel,
-                                text: this.inputData?.axis?.yAxisLabel
-                            }
-                        }
-                    }
-                }
-            })
+            console.log('Applying data to chart', label, option)
+            chart.echart?.setOption(option)
         })
+    }
+
+    deleteCharts() {
+        this.canvasList.forEach((chart, label) => {
+            chart.echart?.dispose()
+            chart.element?.remove()
+            this.canvasList.delete(label)
+        })
+    }
+
+    setupChart(label: string) {
+        const existingChart = this.canvasList.get(label)
+
+        if (existingChart) {
+            delete existingChart.doomed
+            return existingChart
+        }
+
+        if (!this.chartContainer) {
+            console.warn('Chart container not found')
+            return
+        }
+        const newContainer = document.createElement('div')
+        newContainer.setAttribute('name', label)
+        newContainer.setAttribute('class', 'sizer')
+        this.chartContainer.appendChild(newContainer)
+
+        const newChart = echarts.init(newContainer, this.themeName)
+        const chart = { echart: newChart, series: [] as SeriesOption[], element: newContainer }
+        this.canvasList.set(label, chart)
+        //@ts-ignore
+        this.themeBgColor = newChart._theme?.backgroundColor ?? '#fff'
+        //@ts-ignore
+        this.themeColor = newChart._theme?.title?.textStyle?.color ?? '#000'
+        return chart
+    }
+
+    disconnectedCallback() {
+        if (this.resizeObserver && this.chartContainer) {
+            this.resizeObserver.unobserve(this.chartContainer)
+            this.resizeObserver.disconnect()
+        }
+        super.disconnectedCallback()
     }
 
     static styles = css`
         :host {
             display: block;
             color: var(--re-text-color, #000);
-
             font-family: sans-serif;
-            padding: 16px;
             box-sizing: border-box;
+            position: relative;
             margin: auto;
         }
 
@@ -214,15 +378,21 @@ export class WidgetLinechart extends LitElement {
             display: none !important;
         }
 
-        .columnLayout {
-            flex-direction: column;
-        }
-
         .wrapper {
             display: flex;
             flex-direction: column;
             height: 100%;
             width: 100%;
+            padding: 16px;
+            box-sizing: border-box;
+            color: var(--re-text-color, #000);
+            gap: 12px;
+        }
+
+        .sizer {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
         }
 
         .chart-container {
@@ -232,16 +402,9 @@ export class WidgetLinechart extends LitElement {
             position: relative;
         }
 
-        .sizer {
-            flex: 1;
-            overflow: hidden;
-            position: relative;
-        }
-
         header {
             display: flex;
             flex-direction: column;
-            margin: 0 0 16px 0;
         }
         h3 {
             margin: 0;
@@ -255,6 +418,18 @@ export class WidgetLinechart extends LitElement {
             max-width: 300px;
             font-size: 14px;
             line-height: 17px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .chart {
+            width: 600px; /* will be overriden by adjustSizes */
+            height: 230px;
+        }
+
+        .columnLayout {
+            flex-direction: column;
         }
 
         .no-data {
@@ -271,13 +446,12 @@ export class WidgetLinechart extends LitElement {
 
     render() {
         return html`
-            <div class="wrapper">
-                <header>
+            <div class="wrapper" style="background-color: ${this.themeBgColor}; color: ${this.themeColor}">
+                <header class="paging" ?active=${this.inputData?.title || this.inputData?.subTitle}>
                     <h3 class="paging" ?active=${this.inputData?.title}>${this.inputData?.title}</h3>
                     <p class="paging" ?active=${this.inputData?.subTitle}>${this.inputData?.subTitle}</p>
                 </header>
-
-                <div class="paging no-data" ?active=${!this.canvasList.size}>No Data</div>
+                <div class="paging no-data" ?active=${this.canvasList.size === 0}>No Data</div>
                 <div
                     class="chart-container ${this?.inputData?.axis?.columnLayout ? 'columnLayout' : ''}"
                 ></div>
@@ -285,202 +459,3 @@ export class WidgetLinechart extends LitElement {
         `
     }
 }
-window.customElements.define('widget-linechart-versionplaceholder', WidgetLinechart)
-
-// ############################################### WORKAROUND #######################################################################
-//
-// For some reason the import of that adapter is messed up. I suspect that rollup does things in the wrong order.
-// Because this is an import that has side effects. i.e. it overrides the adapters of the previously imported Chart.js
-// So the current solution is to execute the source code here in-line. (moving this to a local file and importing that does not work!)
-// This is the source code of https://github.com/chartjs/chartjs-adapter-date-fns/blob/master/src/index.js
-
-import { _adapters } from 'chart.js'
-
-import {
-    parse,
-    parseISO,
-    toDate,
-    isValid,
-    format,
-    startOfSecond,
-    startOfMinute,
-    startOfHour,
-    startOfDay,
-    startOfWeek,
-    startOfMonth,
-    startOfQuarter,
-    startOfYear,
-    addMilliseconds,
-    addSeconds,
-    addMinutes,
-    addHours,
-    addDays,
-    addWeeks,
-    addMonths,
-    addQuarters,
-    addYears,
-    differenceInMilliseconds,
-    differenceInSeconds,
-    differenceInMinutes,
-    differenceInHours,
-    differenceInDays,
-    differenceInWeeks,
-    differenceInMonths,
-    differenceInQuarters,
-    differenceInYears,
-    endOfSecond,
-    endOfMinute,
-    endOfHour,
-    endOfDay,
-    endOfWeek,
-    endOfMonth,
-    endOfQuarter,
-    endOfYear
-} from 'date-fns'
-
-const FORMATS = {
-    datetime: 'MMM d, yyyy, h:mm:ss aaaa',
-    millisecond: 'h:mm:ss.SSS aaaa',
-    second: 'h:mm:ss aaaa',
-    minute: 'h:mm aaaa',
-    hour: 'ha',
-    day: 'MMM d',
-    week: 'PP',
-    month: 'MMM yyyy',
-    quarter: 'qqq - yyyy',
-    year: 'yyyy'
-}
-
-_adapters._date.override({
-    _id: 'date-fns', // DEBUG
-    formats: function () {
-        return FORMATS
-    },
-
-    parse: function (value, fmt) {
-        if (value === null || typeof value === 'undefined') {
-            return null
-        }
-        const type = typeof value
-        if (type === 'number' || value instanceof Date) {
-            // @ts-ignore
-            value = toDate(value)
-        } else if (type === 'string') {
-            if (typeof fmt === 'string') {
-                // @ts-ignore
-                value = parse(value, fmt, new Date(), this.options)
-            } else {
-                // @ts-ignore
-                value = parseISO(value, this.options)
-            }
-        }
-        // @ts-ignore
-        return isValid(value) ? value.getTime() : null
-    },
-
-    format: function (time, fmt) {
-        return format(time, fmt, this.options)
-    },
-
-    // @ts-ignore
-    add: function (time, amount, unit) {
-        switch (unit) {
-            case 'millisecond':
-                return addMilliseconds(time, amount)
-            case 'second':
-                return addSeconds(time, amount)
-            case 'minute':
-                return addMinutes(time, amount)
-            case 'hour':
-                return addHours(time, amount)
-            case 'day':
-                return addDays(time, amount)
-            case 'week':
-                return addWeeks(time, amount)
-            case 'month':
-                return addMonths(time, amount)
-            case 'quarter':
-                return addQuarters(time, amount)
-            case 'year':
-                return addYears(time, amount)
-            default:
-                return time
-        }
-    },
-
-    diff: function (max, min, unit) {
-        switch (unit) {
-            case 'millisecond':
-                return differenceInMilliseconds(max, min)
-            case 'second':
-                return differenceInSeconds(max, min)
-            case 'minute':
-                return differenceInMinutes(max, min)
-            case 'hour':
-                return differenceInHours(max, min)
-            case 'day':
-                return differenceInDays(max, min)
-            case 'week':
-                return differenceInWeeks(max, min)
-            case 'month':
-                return differenceInMonths(max, min)
-            case 'quarter':
-                return differenceInQuarters(max, min)
-            case 'year':
-                return differenceInYears(max, min)
-            default:
-                return 0
-        }
-    },
-
-    // @ts-ignore
-    startOf: function (time, unit, weekday) {
-        switch (unit) {
-            case 'second':
-                return startOfSecond(time)
-            case 'minute':
-                return startOfMinute(time)
-            case 'hour':
-                return startOfHour(time)
-            case 'day':
-                return startOfDay(time)
-            case 'week':
-                return startOfWeek(time)
-            case 'isoWeek':
-                // @ts-ignore
-                return startOfWeek(time, { weekStartsOn: +weekday })
-            case 'month':
-                return startOfMonth(time)
-            case 'quarter':
-                return startOfQuarter(time)
-            case 'year':
-                return startOfYear(time)
-            default:
-                return time
-        }
-    },
-
-    // @ts-ignore
-    endOf: function (time, unit) {
-        switch (unit) {
-            case 'second':
-                return endOfSecond(time)
-            case 'minute':
-                return endOfMinute(time)
-            case 'hour':
-                return endOfHour(time)
-            case 'day':
-                return endOfDay(time)
-            case 'week':
-                return endOfWeek(time)
-            case 'month':
-                return endOfMonth(time)
-            case 'quarter':
-                return endOfQuarter(time)
-            case 'year':
-                return endOfYear(time)
-            default:
-                return time
-        }
-    }
-})
