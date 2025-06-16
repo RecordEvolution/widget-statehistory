@@ -270,9 +270,7 @@ export class WidgetLinechart extends LitElement {
                     data: data2 ?? []
                 }
                 let chartName = ds.advanced?.chartName ?? ''
-                if (chartName.includes('#split#')) {
-                    chartName = prefix + '-' + chartName
-                }
+                chartName = chartName.replace('#split#', prefix)
 
                 const chart = this.setupChart(chartName)
                 chart?.series.push(pds)
@@ -298,6 +296,12 @@ export class WidgetLinechart extends LitElement {
         return 'category'
     }
 
+    yAxisType(): 'value' | 'log' | 'category' | undefined {
+        const onePoint = this.inputData?.dataseries?.[0]?.data?.[0]
+        if (!isNaN(Number(onePoint?.y))) return 'value'
+        return 'category'
+    }
+
     applyData() {
         const modifier = 1
 
@@ -317,6 +321,7 @@ export class WidgetLinechart extends LitElement {
             // option.xAxis.axisLine.lineStyle.width = 2 * modifier
             // option.xAxis.axisLabel.fontSize = 20 * modifier
             option.xAxis.type = this.xAxisType()
+            option.yAxis.type = this.yAxisType()
 
             option.yAxis.name = this.inputData?.axis?.yAxisLabel ?? ''
             // option.yAxis.axisLine.lineStyle.width = 2 * modifier
@@ -324,7 +329,7 @@ export class WidgetLinechart extends LitElement {
             option.yAxis.scale = this.inputData?.axis?.yAxisScaling ?? false
 
             option.series = chart.series
-
+            // console.log('Applying data to chart', label, option)
             if (chart.series.length <= 1) option.legend.show = false
             const oldOption: any = chart.echart?.getOption() ?? {}
             const notMerge = oldOption.series?.length !== chart.series.length

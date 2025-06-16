@@ -52,7 +52,7 @@ export type ChartName = string;
  * If timeseries is checked in the settings, then this should be an ISO String date like 2023-11-04T22:47:52.351152+00:00. But this works with many other formats as well.
  */
 export type XValue = string;
-export type YValue = number;
+export type YValue = string;
 /**
  * Controls the symbol size for line and scatter charts.
  */

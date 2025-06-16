@@ -179,7 +179,7 @@
                                 },
                                 "y": {
                                     "title": "Y-Value",
-                                    "type": "number",
+                                    "type": "string",
                                     "order": 2,
                                     "required": true
                                 },
