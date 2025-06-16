@@ -71,7 +71,7 @@ export class WidgetLinechart extends LitElement {
         this.template = {
             title: {
                 text: 'Temperature Change in the Coming Week',
-                left: 'left',
+                left: 20,
                 textStyle: {
                     fontSize: 14
                 }
@@ -81,7 +81,15 @@ export class WidgetLinechart extends LitElement {
             },
             legend: {
                 right: '10%',
-                top: '3%'
+                top: 0
+            },
+            grid: {
+                backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                top: 30,
+                bottom: 20,
+                left: 20,
+                right: 10,
+                containLabel: true // ensures labels are not cut off
             },
             toolbox: {
                 show: true,
@@ -106,7 +114,7 @@ export class WidgetLinechart extends LitElement {
             xAxis: {
                 type: 'value', // value, time, log, category
                 name: 'Time',
-                nameGap: 25,
+                nameGap: 27,
                 nameLocation: 'middle',
                 axisLine: {
                     lineStyle: {
@@ -121,7 +129,7 @@ export class WidgetLinechart extends LitElement {
                 type: 'value',
                 nameLocation: 'middle',
                 name: 'Temperature (°C)',
-                nameGap: 25,
+                nameGap: 30,
                 axisLabel: {
                     fontSize: 14
                 },
@@ -238,35 +246,29 @@ export class WidgetLinechart extends LitElement {
                     : undefined
                 const data = distincts.length === 1 ? ds.data : ds.data?.filter((d) => d.pivot === piv)
                 const data2 = this.inputData?.axis?.timeseries
-                    ? data?.map((d) =>
-                          d?.r !== undefined ? [new Date(d.x ?? ''), d.y, d.r] : [new Date(d.x ?? ''), d.y]
-                      )
-                    : data?.map((d) => (d?.r !== undefined ? [d.x, d.y, d.r] : [d.x, d.y]))
+                    ? data?.map((d) => [new Date(d.x ?? ''), d.y, d.r])
+                    : data?.map((d) => [d.x, d.y, d.r])
 
+                // preparing the echarts series option for later application
                 const pds: SeriesOption = {
                     name: name,
                     type: ds.type ?? 'line',
                     lineStyle: {
                         color: lineColor,
                         width: ds.styling?.borderWidth ?? 2,
-                        // @ts-ignore
                         type: ds.styling?.borderDash ?? 'solid'
                     },
                     itemStyle: {
                         color: fillColor,
                         borderColor: lineColor,
-                        borderWidth: ds.styling?.borderWidth ?? 2,
-                        // @ts-ignore
-                        type: ds.styling?.borderDash ?? 'solid'
+                        borderWidth: ds.styling?.borderWidth ?? 2
                     },
-                    areaStyle: { color: ds.styling?.fill ? fillColor : 'transparent' },
+                    areaStyle: ds.styling?.fill ? { color: fillColor } : undefined,
                     symbol: ds.styling?.pointStyle ?? 'circle',
                     symbolSize: (data) => data[2] ?? 4,
                     showSymbol: ds.styling?.pointStyle === 'none' ? false : true,
                     data: data2 ?? []
                 }
-                // if (ds.type === 'scatter') (pds as ScatterSeriesOption).symbolSize = (data) => data[2]
-
                 let chartName = ds.advanced?.chartName ?? ''
                 if (chartName.includes('#split#')) {
                     chartName = prefix + '-' + chartName
@@ -277,13 +279,16 @@ export class WidgetLinechart extends LitElement {
             })
         })
 
-        Array.from(this.canvasList.entries())
-            .filter(([l, c]) => c.doomed)
-            .forEach(([label, chart]) => {
-                chart.echart?.dispose()
-                chart.element?.remove()
-                this.canvasList.delete(label)
-            })
+        const doomedCharts: string[] = []
+        // remove all doomed charts
+        this.canvasList.forEach((chart, label) => {
+            if (!chart.doomed) return
+            chart.echart?.dispose()
+            chart.element?.remove()
+            doomedCharts.push(label)
+        })
+
+        doomedCharts.forEach((label) => this.canvasList.delete(label))
     }
 
     xAxisType(): 'value' | 'log' | 'category' | 'time' | undefined {
@@ -321,8 +326,10 @@ export class WidgetLinechart extends LitElement {
             option.series = chart.series
 
             if (chart.series.length <= 1) option.legend.show = false
-
-            chart.echart?.setOption(option)
+            const oldOption: any = chart.echart?.getOption() ?? {}
+            const notMerge = oldOption.series?.length !== chart.series.length
+            chart.echart?.setOption(option, { notMerge })
+            chart.echart?.resize()
         })
     }
 

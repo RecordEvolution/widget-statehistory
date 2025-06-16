@@ -7,16 +7,16 @@
 
 export type Title = string;
 export type Subtitle = string;
+export type XAxisLabel = string;
+export type YAxisLabel = string;
 /**
  * This will apply a proper time series x-Axis. Check if your x-values are timestamps.
  */
 export type TimeseriesChart = boolean;
-export type XAxisLabel = string;
 /**
  * If checked, a zoom tool will be shown on the x-axis to zoom into the chart.
  */
 export type XAxisZoomTool = boolean;
-export type YAxisLabel = string;
 /**
  * If checked, the Y-Axis will be scaled to the data range. If not checked, the Y-Axis will always start at 0.
  */
@@ -54,7 +54,7 @@ export type ChartName = string;
 export type XValue = string;
 export type YValue = number;
 /**
- * Valid only for Scatter Chart type.
+ * Controls the symbol size for line and scatter charts.
  */
 export type BubbleSize = number;
 /**
@@ -90,10 +90,10 @@ export interface InputData {
     [k: string]: unknown;
 }
 export interface AxisSettings {
-    timeseries?: TimeseriesChart;
     xAxisLabel?: XAxisLabel;
-    xAxisZoom?: XAxisZoomTool;
     yAxisLabel?: YAxisLabel;
+    timeseries?: TimeseriesChart;
+    xAxisZoom?: XAxisZoomTool;
     yAxisScaling?: YAxisScaling;
     columnLayout?: VerticalLayout;
     [k: string]: unknown;

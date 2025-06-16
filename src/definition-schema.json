@@ -17,30 +17,30 @@
             "type": "object",
             "order": 3,
             "properties": {
+                "xAxisLabel": {
+                    "title": "X-Axis Label",
+                    "type": "string",
+                    "dataDrivenDisabled": false,
+                    "order": 3
+                },
+                "yAxisLabel": {
+                    "title": "Y-Axis Label",
+                    "type": "string",
+                    "dataDrivenDisabled": false,
+                    "order": 4
+                },
                 "timeseries": {
                     "title": "Timeseries Chart",
                     "description": "This will apply a proper time series x-Axis. Check if your x-values are timestamps.",
                     "type": "boolean",
                     "dataDrivenDisabled": true,
-                    "order": 3
-                },
-                "xAxisLabel": {
-                    "title": "X-Axis Label",
-                    "type": "string",
-                    "dataDrivenDisabled": false,
-                    "order": 4
+                    "order": 5
                 },
                 "xAxisZoom": {
                     "title": "X-Axis Zoom Tool",
                     "type": "boolean",
                     "description": "If checked, a zoom tool will be shown on the x-axis to zoom into the chart.",
                     "dataDrivenDisabled": true,
-                    "order": 5
-                },
-                "yAxisLabel": {
-                    "title": "Y-Axis Label",
-                    "type": "string",
-                    "dataDrivenDisabled": false,
                     "order": 6
                 },
                 "yAxisScaling": {
@@ -185,7 +185,7 @@
                                 },
                                 "r": {
                                     "title": "Bubble Size",
-                                    "description": "Valid only for Scatter Chart type.",
+                                    "description": "Controls the symbol size for line and scatter charts.",
                                     "order": 3,
                                     "type": "number"
                                 },
