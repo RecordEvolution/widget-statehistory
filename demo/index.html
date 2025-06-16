@@ -28,13 +28,14 @@
             import '../dist/widget-linechart.js'
             const data = await fetch('../src/default-data.json').then((res) => res.json())
             const themeObject = await fetch('themes/vintage.json').then((res) => res.json())
+            const theme = { theme_name: 'vintage', theme_object: themeObject }
 
             render(
                 html`
-                    <widget-linechart-1.6.4 .themeObject="${themeObject}" .inputData=${data}>
+                    <widget-linechart-1.6.5 .theme="${theme}" .inputData=${data}>
                         web component is not registered. Make sure to use the tag with the correct version
                         string from the package.json
-                    </widget-linechart-1.6.4>
+                    </widget-linechart-1.6.5>
                 `,
                 document.querySelector('#demo')
             )

@@ -33,16 +33,17 @@ import { InputData } from './definition-schema'
 import { EChartsOption, ScatterSeriesOption, SeriesOption } from 'echarts'
 import { TitleOption } from 'echarts/types/dist/shared'
 
+type Theme = {
+    theme_name: string
+    theme_object: any
+}
 @customElement('widget-linechart-versionplaceholder')
 export class WidgetLinechart extends LitElement {
     @property({ type: Object })
     inputData?: InputData
 
     @property({ type: Object })
-    themeObject?: any
-
-    @property({ type: String })
-    themeName?: string
+    theme?: Theme
 
     @state()
     private canvasList: Map<
@@ -172,12 +173,8 @@ export class WidgetLinechart extends LitElement {
             this.applyData()
         }
 
-        if (changedProperties.has('themeObject')) {
-            this.registerTheme(this.themeName, this.themeObject)
-        }
-
-        if (changedProperties.has('themeName')) {
-            this.registerTheme(this.themeName, this.themeObject)
+        if (changedProperties.has('theme')) {
+            this.registerTheme(this.theme)
             this.deleteCharts()
             this.transformData()
             this.applyData()
@@ -200,10 +197,11 @@ export class WidgetLinechart extends LitElement {
         }
     }
 
-    registerTheme(themeName?: string, themeObject?: any) {
-        if (!themeObject || !themeName) return
+    registerTheme(theme?: Theme) {
+        if (!theme || !theme.theme_object || !theme.theme_name) return
 
-        echarts.registerTheme(themeName, this.themeObject)
+        console.log('Registering theme', theme)
+        echarts.registerTheme(theme.theme_name, theme.theme_object)
     }
 
     transformData() {
@@ -363,7 +361,7 @@ export class WidgetLinechart extends LitElement {
         newContainer.setAttribute('class', 'sizer')
         this.chartContainer.appendChild(newContainer)
 
-        const newChart = echarts.init(newContainer, this.themeName)
+        const newChart = echarts.init(newContainer, this.theme?.theme_name)
         const chart = { echart: newChart, series: [] as SeriesOption[], element: newContainer }
         this.canvasList.set(label, chart)
         //@ts-ignore
