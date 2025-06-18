@@ -184,6 +184,7 @@ export class WidgetLinechart extends LitElement {
         this.chartContainer = this.shadowRoot?.querySelector('.chart-container')
         this.transformData()
         this.applyData()
+        this.registerTheme(this.theme)
         // Add ResizeObserver for chart container
         if (this.chartContainer) {
             this.resizeObserver = new ResizeObserver(() => {
@@ -196,16 +197,16 @@ export class WidgetLinechart extends LitElement {
     }
 
     registerTheme(theme?: Theme) {
-        if (!theme || !theme.theme_object || !theme.theme_name) return
-
-        console.log('Registering theme', theme)
-        echarts.registerTheme(theme.theme_name, theme.theme_object)
         const cssTextColor = getComputedStyle(this).getPropertyValue('--re-text-color').trim()
         const cssBgColor = getComputedStyle(this).getPropertyValue('--re-background-color').trim()
         this.themeBgColor = cssBgColor || this.theme?.theme_object?.backgroundColor
         this.themeTitleColor = cssTextColor || this.theme?.theme_object?.title?.textStyle?.color
         this.themeSubtitleColor =
             cssTextColor || this.theme?.theme_object?.title?.subtextStyle?.color || this.themeTitleColor
+
+        if (!theme || !theme.theme_object || !theme.theme_name) return
+
+        echarts.registerTheme(theme.theme_name, theme.theme_object)
     }
 
     transformData() {
