@@ -30,7 +30,7 @@ echarts.use([
 ])
 
 import { InputData } from './definition-schema'
-import { EChartsOption, ScatterSeriesOption, SeriesOption } from 'echarts'
+import { EChartsOption, SeriesOption } from 'echarts'
 import { TitleOption } from 'echarts/types/dist/shared'
 
 type Theme = {
@@ -51,11 +51,9 @@ export class WidgetLinechart extends LitElement {
         { echart?: echarts.ECharts; series: SeriesOption[]; doomed?: boolean; element?: HTMLDivElement }
     > = new Map()
 
-    @state()
-    private themeBgColor?: string
-
-    @state()
-    private themeColor?: string
+    @state() private themeBgColor?: string
+    @state() private themeTitleColor?: string
+    @state() private themeSubtitleColor?: string
 
     boxes?: HTMLDivElement[]
     origWidth: number = 0
@@ -202,6 +200,12 @@ export class WidgetLinechart extends LitElement {
 
         console.log('Registering theme', theme)
         echarts.registerTheme(theme.theme_name, theme.theme_object)
+        const cssTextColor = getComputedStyle(this).getPropertyValue('--re-text-color').trim()
+        const cssBgColor = getComputedStyle(this).getPropertyValue('--re-background-color').trim()
+        this.themeBgColor = cssBgColor || this.theme?.theme_object?.backgroundColor
+        this.themeTitleColor = cssTextColor || this.theme?.theme_object?.title?.textStyle?.color
+        this.themeSubtitleColor =
+            cssTextColor || this.theme?.theme_object?.title?.subtextStyle?.color || this.themeTitleColor
     }
 
     transformData() {
@@ -332,7 +336,7 @@ export class WidgetLinechart extends LitElement {
             const oldOption: any = chart.echart?.getOption() ?? {}
             const notMerge = oldOption.series?.length !== chart.series.length
             chart.echart?.setOption(option, { notMerge })
-            chart.echart?.resize()
+            // chart.echart?.resize()
         })
     }
 
@@ -364,10 +368,7 @@ export class WidgetLinechart extends LitElement {
         const newChart = echarts.init(newContainer, this.theme?.theme_name)
         const chart = { echart: newChart, series: [] as SeriesOption[], element: newContainer }
         this.canvasList.set(label, chart)
-        //@ts-ignore
-        this.themeBgColor = newChart._theme?.backgroundColor
-        //@ts-ignore
-        this.themeColor = newChart._theme?.title?.textStyle?.color
+
         return chart
     }
 
@@ -382,7 +383,6 @@ export class WidgetLinechart extends LitElement {
     static styles = css`
         :host {
             display: block;
-            color: var(--re-text-color, #000);
             font-family: sans-serif;
             box-sizing: border-box;
             position: relative;
@@ -400,7 +400,6 @@ export class WidgetLinechart extends LitElement {
             width: 100%;
             padding: 16px;
             box-sizing: border-box;
-            color: var(--re-text-color, #000);
             gap: 12px;
         }
 
@@ -449,7 +448,6 @@ export class WidgetLinechart extends LitElement {
 
         .no-data {
             font-size: 20px;
-            color: var(--re-text-color, #000);
             display: flex;
             height: 100%;
             width: 100%;
@@ -461,10 +459,19 @@ export class WidgetLinechart extends LitElement {
 
     render() {
         return html`
-            <div class="wrapper" style="background-color: ${this.themeBgColor}; color: ${this.themeColor}">
+            <div
+                class="wrapper"
+                style="background-color: ${this.themeBgColor}; color: ${this.themeTitleColor}"
+            >
                 <header class="paging" ?active=${this.inputData?.title || this.inputData?.subTitle}>
                     <h3 class="paging" ?active=${this.inputData?.title}>${this.inputData?.title}</h3>
-                    <p class="paging" ?active=${this.inputData?.subTitle}>${this.inputData?.subTitle}</p>
+                    <p
+                        class="paging"
+                        ?active=${this.inputData?.subTitle}
+                        style="color: ${this.themeSubtitleColor}"
+                    >
+                        ${this.inputData?.subTitle}
+                    </p>
                 </header>
                 <div class="paging no-data" ?active=${this.canvasList.size === 0}>No Data</div>
                 <div
