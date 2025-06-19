@@ -7,11 +7,11 @@
         "showLegend": true
     },
     "stateMap": [
-        { "name": "RUNNING", "color": "#4caf50" },
-        { "name": "STOPPED", "color": "grey" },
-        { "name": "MAINTENANCE", "color": "orange" },
-        { "name": "FAILURE", "color": "red" },
-        { "name": "OFF", "color": "transparent" }
+        { "name": "Running", "color": "#4caf50" },
+        { "name": "Stopped", "color": "grey" },
+        { "name": "Maintenance", "color": "orange" },
+        { "name": "Failure", "color": "red" },
+        { "name": "Off", "color": "transparent" }
     ],
     "dataseries": [
         {
@@ -20,49 +20,49 @@
                 {
                     "Label": "Asset 1",
                     "tsp": "2025-06-18T08:00:00Z",
-                    "state": "RUNNING",
+                    "state": "Running",
                     "pivot": "Asset 1"
                 },
                 {
                     "Label": "Asset 1",
                     "tsp": "2025-06-18T12:00:00Z",
-                    "state": "MAINTENANCE",
+                    "state": "Maintenance",
                     "pivot": "Asset 1"
                 },
                 {
                     "Label": "Asset 1",
                     "tsp": "2025-06-18T12:30:00Z",
-                    "state": "OFF",
+                    "state": "Off",
                     "pivot": "Asset 1"
                 },
                 {
                     "Label": "Asset 1",
                     "tsp": "2025-06-18T14:00:00Z",
-                    "state": "STOPPED",
+                    "state": "Stopped",
                     "pivot": "Asset 1"
                 },
                 {
                     "label": "Asset 2",
                     "tsp": "2025-06-18T09:00:00Z",
-                    "state": "MAINTENANCE",
+                    "state": "Maintenance",
                     "pivot": "Asset 2"
                 },
                 {
                     "label": "Asset 2",
                     "tsp": "2025-06-18T13:00:00Z",
-                    "state": "FAILURE",
+                    "state": "Failure",
                     "pivot": "Asset 2"
                 },
                 {
                     "label": "Asset 2",
                     "tsp": "2025-06-18T17:00:00Z",
-                    "state": "STOPPED",
+                    "state": "Stopped",
                     "pivot": "Asset 2"
                 },
                 {
                     "label": "Asset 2",
                     "tsp": "2025-06-18T18:00:00Z",
-                    "state": "RUNNING",
+                    "state": "Running",
                     "pivot": "Asset 2"
                 }
             ]
