@@ -349,7 +349,7 @@ export class WidgetStateHistory extends LitElement {
     makeLegend() {
         const data =
             this.inputData?.stateMap?.map((s) => ({
-                name: s.name,
+                name: this.capitalize(s.name ?? ''),
                 itemStyle: {
                     color: s.color,
                     borderColor: this.theme?.theme_object?.timeAxis?.splitLine?.lineStyle ?? '#ccc',
@@ -361,11 +361,15 @@ export class WidgetStateHistory extends LitElement {
         const series =
             this.inputData?.stateMap?.map((s) => ({
                 type: 'custom',
-                name: s.name,
+                name: this.capitalize(s.name ?? ''),
                 renderItem: () => null, // no visual rendering
                 data: []
             })) ?? []
         return { data, series }
+    }
+
+    capitalize(text: string): string {
+        return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()
     }
 
     deleteCharts() {

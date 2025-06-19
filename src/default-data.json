@@ -1,5 +1,5 @@
 {
-    "title": "State History Example",
+    "title": "Operations History",
     "subTitle": "Example subtitle for state history widget.",
     "axis": {
         "xAxisLabel": "Time",
@@ -16,7 +16,6 @@
     "dataseries": [
         {
             "label": "Machine",
-            "chartName": "Operations History",
             "data": [
                 {
                     "Label": "Asset 1",
