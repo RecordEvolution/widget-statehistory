@@ -1,102 +1,70 @@
 {
-    "title": "Demo Chart",
-    "subTitle": "This is a demo chart with multiple data series.",
+    "title": "State History Example",
+    "subTitle": "Example subtitle for state history widget.",
     "axis": {
-        "timeseries": true,
         "xAxisLabel": "Time",
         "xAxisZoom": false,
-        "yAxisLabel": "Temperature",
-        "yAxisScaling": false,
-        "columnLayout": true
+        "showLegend": true
     },
+    "stateMap": [
+        { "name": "RUNNING", "color": "#4caf50" },
+        { "name": "STOPPED", "color": "grey" },
+        { "name": "MAINTENANCE", "color": "orange" },
+        { "name": "FAILURE", "color": "red" },
+        { "name": "OFF", "color": "transparent" }
+    ],
     "dataseries": [
         {
-            "label": "Demo Bubble",
-            "type": "scatter",
-            "styling": {
-                "borderWidth": 2,
-                "fill": false
-            },
-            "advanced": {
-                "drawOrder": 1
-            },
+            "label": "Machine",
+            "chartName": "Operations History",
             "data": [
                 {
-                    "x": "2023-11-05T12:47:52.351152+00:00",
-                    "y": 40,
-                    "r": 10
+                    "Label": "Asset 1",
+                    "tsp": "2025-06-18T08:00:00Z",
+                    "state": "RUNNING",
+                    "pivot": "Asset 1"
                 },
                 {
-                    "x": "2023-11-07T12:47:52.351152+00:00",
-                    "y": 40,
-                    "r": 70
+                    "Label": "Asset 1",
+                    "tsp": "2025-06-18T12:00:00Z",
+                    "state": "MAINTENANCE",
+                    "pivot": "Asset 1"
                 },
                 {
-                    "x": "2023-11-11T22:47:52.351152+00:00",
-                    "y": 32,
-                    "r": 27
-                }
-            ]
-        },
-        {
-            "label": "Demo Bar",
-            "type": "bar",
-            "styling": {
-                "borderWidth": 2,
-                "pointStyle": "circle",
-                "fill": false
-            },
-            "advanced": {
-                "drawOrder": 2
-            },
-            "data": [
-                {
-                    "x": "2023-11-04T22:47:52.351152+00:00",
-                    "y": 28
+                    "Label": "Asset 1",
+                    "tsp": "2025-06-18T12:30:00Z",
+                    "state": "OFF",
+                    "pivot": "Asset 1"
                 },
                 {
-                    "x": "2023-11-05T22:47:52.351152+00:00",
-                    "y": 10
+                    "Label": "Asset 1",
+                    "tsp": "2025-06-18T14:00:00Z",
+                    "state": "STOPPED",
+                    "pivot": "Asset 1"
                 },
                 {
-                    "x": "2023-11-07T22:47:52.351152+00:00",
-                    "y": 59
+                    "label": "Asset 2",
+                    "tsp": "2025-06-18T09:00:00Z",
+                    "state": "MAINTENANCE",
+                    "pivot": "Asset 2"
                 },
                 {
-                    "x": "2023-11-10T22:47:52.351152+00:00",
-                    "y": 42
-                }
-            ]
-        },
-        {
-            "label": "Demo Line",
-            "type": "line",
-            "styling": {
-                "fill": false,
-                "borderWidth": 2,
-                "borderDash": "dashed",
-                "pointStyle": "circle"
-            },
-
-            "advanced": {
-                "drawOrder": 3
-            },
-            "data": [
-                {
-                    "x": "2023-11-03T22:47:52.351152+00:00",
-                    "y": 20
+                    "label": "Asset 2",
+                    "tsp": "2025-06-18T13:00:00Z",
+                    "state": "FAILURE",
+                    "pivot": "Asset 2"
                 },
                 {
-                    "x": "2023-11-06T09:47:52.351152+00:00",
-                    "y": 40
+                    "label": "Asset 2",
+                    "tsp": "2025-06-18T17:00:00Z",
+                    "state": "STOPPED",
+                    "pivot": "Asset 2"
                 },
                 {
-                    "x": "2023-11-08T09:47:52.351152+00:00",
-                    "y": 45
-                },
-                {
-                    "x": "2023-11-11T22:47:52.351152+00:00",
-                    "y": 20
+                    "label": "Asset 2",
+                    "tsp": "2025-06-18T18:00:00Z",
+                    "state": "RUNNING",
+                    "pivot": "Asset 2"
                 }
             ]
         }

@@ -18,44 +18,50 @@
             "order": 3,
             "properties": {
                 "xAxisLabel": {
-                    "title": "X-Axis Label",
+                    "title": "Time-Axis Label",
                     "type": "string",
                     "dataDrivenDisabled": false,
                     "order": 3
                 },
-                "yAxisLabel": {
-                    "title": "Y-Axis Label",
-                    "type": "string",
-                    "dataDrivenDisabled": false,
-                    "order": 4
-                },
-                "timeseries": {
-                    "title": "Timeseries Chart",
-                    "description": "This will apply a proper time series x-Axis. Check if your x-values are timestamps.",
-                    "type": "boolean",
-                    "dataDrivenDisabled": true,
-                    "order": 5
-                },
                 "xAxisZoom": {
-                    "title": "X-Axis Zoom Tool",
+                    "title": "Time Axis Zoom Tool",
                     "type": "boolean",
-                    "description": "If checked, a zoom tool will be shown on the x-axis to zoom into the chart.",
+                    "description": "If checked, a zoom tool will be shown on the time-axis to zoom into the chart.",
                     "dataDrivenDisabled": true,
                     "order": 6
                 },
-                "yAxisScaling": {
-                    "title": "Y-Axis Scaling",
-                    "description": "If checked, the Y-Axis will be scaled to the data range. If not checked, the Y-Axis will always start at 0.",
+                "showLegend": {
+                    "title": "Show Legend",
                     "type": "boolean",
+                    "description": "If checked, a legend will be shown in the chart.",
                     "dataDrivenDisabled": true,
                     "order": 7
-                },
-                "columnLayout": {
-                    "title": "Vertical Layout",
-                    "description": "When multiple charts are drawn, then they will be layed out horizontically or vertically.",
-                    "type": "boolean",
-                    "dataDrivenDisabled": true,
-                    "order": 8
+                }
+            }
+        },
+        "stateMap": {
+            "title": "State Map",
+            "type": "array",
+            "dataDrivenDisabled": true,
+            "order": 3,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "title": "State Name",
+                        "description": "The name of the state as found in the data.",
+                        "type": "string",
+                        "required": true,
+                        "order": 1
+                    },
+                    "color": {
+                        "title": "Color",
+                        "description": "The color of the state in the chart.",
+                        "type": "color",
+                        "color": true,
+                        "required": true,
+                        "order": 2
+                    }
                 }
             }
         },
@@ -74,93 +80,12 @@
                         "required": true,
                         "order": 1
                     },
-                    "type": {
-                        "title": "Drawing Style",
+                    "chartName": {
+                        "title": "Chart Name",
+                        "description": "If two dataseries have the same 'Chart Name', they will be drawn in the same chart. Otherwise they will get their own chart. If the name contains #split# as substring then a separat chart will be drawn for each split dataseries.",
                         "type": "string",
-                        "enum": ["bar", "line", "scatter"],
-                        "required": true,
                         "dataDrivenDisabled": true,
-                        "order": 2
-                    },
-                    "backgroundColor": {
-                        "title": "Fill Color",
-                        "description": "The inner color of the bars if you chose Drawing Type 'bar' or the inner colors of the points if you chose Drawing Type 'line'.",
-                        "type": "color",
-                        "color": true,
                         "order": 3
-                    },
-                    "borderColor": {
-                        "title": "Line Color",
-                        "type": "color",
-                        "color": true,
-                        "order": 4
-                    },
-                    "styling": {
-                        "title": "Styling",
-                        "description": "",
-                        "type": "object",
-                        "order": 6,
-                        "properties": {
-                            "fill": {
-                                "title": "Line Area Fill",
-                                "description": "Check this box to turn a line chart into an area chart.",
-                                "type": "boolean",
-                                "dataDrivenDisabled": true,
-                                "order": 1
-                            },
-                            "borderWidth": {
-                                "title": "Line Width",
-                                "description": "Width of the lines in the chart.",
-                                "type": "number",
-                                "dataDrivenDisabled": true,
-                                "order": 2
-                            },
-                            "borderDash": {
-                                "title": "Line Dash Style",
-                                "description": "",
-                                "type": "string",
-                                "enum": ["solid", "dashed", "dotted"],
-                                "dataDrivenDisabled": true,
-                                "order": 3
-                            },
-                            "pointStyle": {
-                                "title": "Symbol Style",
-                                "type": "string",
-                                "enum": [
-                                    "circle",
-                                    "rect",
-                                    "roundRect",
-                                    "triangle",
-                                    "diamond",
-                                    "pin",
-                                    "arrow",
-                                    "none"
-                                ],
-                                "order": 5
-                            }
-                        }
-                    },
-                    "advanced": {
-                        "title": "Advanced Settings",
-                        "description": "",
-                        "type": "object",
-                        "order": 7,
-                        "properties": {
-                            "drawOrder": {
-                                "title": "Draw Order",
-                                "description": "Determines the draw order of the series. Dataseries with lower numbers are drawn on top of ones with higher numbers within one chart.",
-                                "type": "number",
-                                "dataDrivenDisabled": true,
-                                "order": 2
-                            },
-                            "chartName": {
-                                "title": "Chart Name",
-                                "description": "If two dataseries have the same 'Chart Name', they will be drawn in the same chart. Otherwise they will get their own chart. If the name contains #split# as substring then a separat chart will be drawn for each split dataseries.",
-                                "type": "string",
-                                "dataDrivenDisabled": true,
-                                "order": 3
-                            }
-                        }
                     },
                     "data": {
                         "title": "Data",
@@ -170,24 +95,25 @@
                         "items": {
                             "type": "object",
                             "properties": {
-                                "x": {
-                                    "title": "X-Value",
-                                    "description": "If timeseries is checked in the settings, then this should be an ISO String date like 2023-11-04T22:47:52.351152+00:00. But this works with many other formats as well.",
+                                "label": {
+                                    "title": "Asset Label",
+                                    "description": "For each asset the chart shows a line reflecting their state changes over time. This label is used to identify the asset in the chart.",
+                                    "order": 3,
+                                    "type": "string"
+                                },
+                                "tsp": {
+                                    "title": "Event Timestamp",
+                                    "description": "The timestamp of the state change event.",
                                     "type": "string",
                                     "order": 1,
                                     "required": true
                                 },
-                                "y": {
-                                    "title": "Y-Value",
+                                "state": {
+                                    "title": "State",
+                                    "description": "The state the asset is in starting from the event timestamp.",
                                     "type": "string",
                                     "order": 2,
                                     "required": true
-                                },
-                                "r": {
-                                    "title": "Bubble Size",
-                                    "description": "Controls the symbol size for line and scatter charts.",
-                                    "order": 3,
-                                    "type": "number"
                                 },
                                 "pivot": {
                                     "title": "Split Data by",

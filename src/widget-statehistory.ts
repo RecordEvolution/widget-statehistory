@@ -1,44 +1,38 @@
 import { html, css, LitElement, PropertyValueMap } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
+import tinycolor, { ColorInput } from 'tinycolor2'
+import { Duration } from 'luxon'
 
 import * as echarts from 'echarts/core'
 import {
     TitleComponent,
-    ToolboxComponent,
     TooltipComponent,
-    LegendComponent,
+    GridComponent,
     DataZoomComponent,
-    GridComponent
+    LegendComponent
 } from 'echarts/components'
-import { LineChart, BarChart, ScatterChart } from 'echarts/charts'
-import { UniversalTransition } from 'echarts/features'
+import { CustomChart } from 'echarts/charts'
 import { CanvasRenderer } from 'echarts/renderers'
-import tinycolor, { ColorInput } from 'tinycolor2'
 
 echarts.use([
-    GridComponent,
     TitleComponent,
-    ToolboxComponent,
     TooltipComponent,
-    LegendComponent,
+    GridComponent,
     DataZoomComponent,
-    LineChart,
-    BarChart,
-    ScatterChart,
+    CustomChart,
     CanvasRenderer,
-    UniversalTransition
+    LegendComponent
 ])
 
-import { InputData } from './definition-schema'
-import { EChartsOption, SeriesOption } from 'echarts'
-import { TitleOption } from 'echarts/types/dist/shared'
+import { Color, InputData } from './definition-schema'
+import { CustomSeriesOption, CustomSeriesRenderItemReturn, EChartsOption, SeriesOption } from 'echarts'
 
 type Theme = {
     theme_name: string
     theme_object: any
 }
-@customElement('widget-linechart-versionplaceholder')
-export class WidgetLinechart extends LitElement {
+@customElement('widget-statehistory-versionplaceholder')
+export class WidgetStateHistory extends LitElement {
     @property({ type: Object })
     inputData?: InputData
 
@@ -66,29 +60,35 @@ export class WidgetLinechart extends LitElement {
 
     constructor() {
         super()
+        this.renderItem = this.renderItem.bind(this)
 
         this.template = {
+            tooltip: {},
             title: {
-                text: 'Temperature Change in the Coming Week',
-                left: 20,
-                textStyle: {
-                    fontSize: 14
-                }
-            } as TitleOption,
-            tooltip: {
-                trigger: 'axis'
+                text: 'Profile',
+                left: 'left'
             },
             legend: {
-                right: '10%',
-                top: 0
-            },
-            grid: {
-                backgroundColor: 'rgba(0, 255, 0, 0.1)',
-                top: 30,
-                bottom: 20,
-                left: 20,
-                right: 10,
-                containLabel: true // ensures labels are not cut off
+                data: [
+                    {
+                        name: 'RUNNING',
+                        itemStyle: {
+                            color: '#27ae60' // green
+                        }
+                    },
+                    {
+                        name: 'STOPPED',
+                        itemStyle: {
+                            color: '#c0392b' // red
+                        }
+                    }
+                ],
+                textStyle: {
+                    fontSize: 12
+                },
+                top: 'top',
+                right: 0,
+                selectedMode: false
             },
             toolbox: {
                 show: true,
@@ -103,66 +103,86 @@ export class WidgetLinechart extends LitElement {
             },
             dataZoom: [
                 {
-                    show: false,
-                    realtime: true,
-                    // start: 30,
-                    // end: 70,
-                    xAxisIndex: [0, 1]
+                    type: 'slider',
+                    filterMode: 'weakFilter',
+                    showDataShadow: false,
+                    top: 400,
+                    labelFormatter: ''
+                },
+                {
+                    type: 'inside',
+                    filterMode: 'weakFilter'
                 }
             ],
+            grid: {
+                top: 50,
+                bottom: 10,
+                left: 10,
+                right: 10,
+                containLabel: true
+            },
             xAxis: {
-                type: 'value', // value, time, log, category
-                name: 'Time',
-                nameGap: 27,
-                nameLocation: 'middle',
-                axisLine: {
-                    lineStyle: {
-                        width: undefined
-                    }
-                },
-                axisLabel: {
-                    fontSize: 14
-                }
+                type: 'time',
+                scale: true
             },
             yAxis: {
-                type: 'value',
-                nameLocation: 'middle',
-                name: 'Temperature (°C)',
-                nameGap: 30,
-                axisLabel: {
-                    fontSize: 14
-                },
+                type: 'category',
                 axisLine: {
-                    lineStyle: {
-                        width: undefined
-                    }
-                },
-                scale: false
+                    show: false
+                }
             },
             series: [
                 {
-                    name: 'Highest',
-                    type: 'line',
-                    symbolSize: 8,
-                    lineStyle: {
-                        width: 2,
-                        type: 'solid',
-                        color: 'green'
+                    type: 'custom',
+                    name: 'RUNNING',
+                    renderItem: undefined,
+                    itemStyle: {
+                        opacity: 0.8
                     },
-                    data: [10, 11, 13, 11, 12, 12, 9]
-                } as SeriesOption,
-                {
-                    name: 'Lowest',
-                    type: 'line',
-                    symbolSize: 8,
-                    lineStyle: {
-                        width: 2,
-                        type: 'solid'
+                    encode: {
+                        x: [1, 2],
+                        y: 0
                     },
-                    data: [1, -2, 2, 5, 3, 2, 0]
-                } as SeriesOption
+                    data: []
+                }
             ]
         } as EChartsOption
+    }
+
+    renderItem(params: any, api: any): CustomSeriesRenderItemReturn {
+        const asset = api.value(0)
+        const start = api.coord([api.value(1), asset])
+        const end = api.coord([api.value(2), asset])
+        const height = api.size([0, 1])?.[1] * 0.6
+        const rectShape = echarts.graphic.clipRectByRect(
+            {
+                x: start[0],
+                y: start[1] - height / 2,
+                width: end[0] - start[0],
+                height: height
+            },
+            {
+                x: params.coordSys.x,
+                y: params.coordSys.y,
+                width: params.coordSys.width,
+                height: params.coordSys.height
+            }
+        )
+        // console.log('renderItem', params, api, rectShape)
+        return (
+            rectShape && {
+                type: 'rect',
+                transition: ['shape'],
+                shape: rectShape,
+                style: api.style()
+            }
+        )
+    }
+
+    stateToColor(state: string): string {
+        if (!this.inputData?.stateMap) return '#ccc'
+        const colors = this.inputData.stateMap
+        return (colors.find((s) => s.name === state)?.color || '#ccc') as string
     }
 
     update(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -187,6 +207,7 @@ export class WidgetLinechart extends LitElement {
         this.registerTheme(this.theme)
         // Add ResizeObserver for chart container
         if (this.chartContainer) {
+            console.log('Adding ResizeObserver to chart container', this.chartContainer)
             this.resizeObserver = new ResizeObserver(() => {
                 this.canvasList.forEach((chart) => {
                     chart.echart?.resize()
@@ -217,62 +238,57 @@ export class WidgetLinechart extends LitElement {
             chartM.series = []
             chartM.doomed = true
         })
-        this.inputData.dataseries.sort((a, b) => (a.advanced?.drawOrder ?? 0) - (b.advanced?.drawOrder ?? 0))
-        this.inputData.dataseries.forEach((ds) => {
-            ds.advanced ??= {}
-            ds.advanced.chartName ??= ''
+        this.inputData.dataseries.forEach((ds, l) => {
+            ds.chartName ??= ''
 
             ds.data ??= []
 
             // pivot data
             const distincts = [...new Set(ds.data.map((d) => d.pivot))].sort()
-            const derivedBgColors = tinycolor(ds.backgroundColor as ColorInput | undefined)
-                .monochromatic(distincts.length)
-                .map((c: any) => c.toHexString())
-            const derivedBdColors = tinycolor(ds.borderColor as ColorInput | undefined)
-                .monochromatic(distincts.length)
-                .map((c: any) => c.toHexString())
-            //sd
+
             distincts.forEach((piv, i) => {
                 const prefix = piv ?? ''
                 const label = ds.label ?? ''
                 const name = prefix + (!!prefix && !!label ? ' - ' : '') + label
-                const lineColor = ds.borderColor
-                    ? ds.advanced?.chartName?.includes('#split#')
-                        ? ds.borderColor
-                        : derivedBdColors[i]
-                    : undefined
-                const fillColor = ds.backgroundColor
-                    ? ds.advanced?.chartName?.includes('#split#')
-                        ? ds.backgroundColor
-                        : derivedBgColors[i]
-                    : undefined
-                const data = distincts.length === 1 ? ds.data : ds.data?.filter((d) => d.pivot === piv)
-                const data2 = this.inputData?.axis?.timeseries
-                    ? data?.map((d) => [new Date(d.x ?? ''), d.y, d.r])
-                    : data?.map((d) => [d.x, d.y, d.r])
+                const data =
+                    (distincts.length === 1 ? ds.data : ds.data?.filter((d) => d.pivot === piv)) ?? []
+
+                const data1 = data
+                    .map((d) => ({ ...d, tsp: new Date(d.tsp ?? '') }))
+                    .sort((a, b) => a.tsp.getTime() - b.tsp.getTime())
+
+                const data2 = data1.map((d, j) => ({
+                    name: d.state,
+                    value: [
+                        name,
+                        d.tsp,
+                        data1[j + 1]?.tsp ?? new Date(),
+                        Duration.fromMillis(
+                            (data1[j + 1]?.tsp.getTime() ?? new Date().getTime()) - d.tsp.getTime()
+                        ).toFormat('h:mm:ss')
+                    ],
+                    itemStyle: {
+                        normal: {
+                            color: this.stateToColor(d.state ?? '')
+                        }
+                    }
+                }))
 
                 // preparing the echarts series option for later application
-                const pds: SeriesOption = {
+                const pds: any = {
+                    type: 'custom',
                     name: name,
-                    type: ds.type ?? 'line',
-                    lineStyle: {
-                        color: lineColor,
-                        width: ds.styling?.borderWidth ?? 2,
-                        type: ds.styling?.borderDash ?? 'solid'
-                    },
+                    renderItem: this.renderItem,
                     itemStyle: {
-                        color: fillColor,
-                        borderColor: lineColor,
-                        borderWidth: ds.styling?.borderWidth ?? 2
+                        opacity: 0.8
                     },
-                    areaStyle: ds.styling?.fill ? { color: fillColor } : undefined,
-                    symbol: ds.styling?.pointStyle ?? 'circle',
-                    symbolSize: (data) => data[2] ?? 4,
-                    showSymbol: ds.styling?.pointStyle === 'none' ? false : true,
+                    encode: {
+                        x: [1, 2],
+                        y: 0
+                    },
                     data: data2 ?? []
                 }
-                let chartName = ds.advanced?.chartName ?? ''
+                let chartName = ds.chartName ?? ''
                 chartName = chartName.replace('#split#', prefix)
 
                 const chart = this.setupChart(chartName)
@@ -292,19 +308,6 @@ export class WidgetLinechart extends LitElement {
         doomedCharts.forEach((label) => this.canvasList.delete(label))
     }
 
-    xAxisType(): 'value' | 'log' | 'category' | 'time' | undefined {
-        if (this.inputData?.axis?.timeseries) return 'time'
-        const onePoint = this.inputData?.dataseries?.[0]?.data?.[0]
-        if (!isNaN(Number(onePoint?.x))) return 'value'
-        return 'category'
-    }
-
-    yAxisType(): 'value' | 'log' | 'category' | undefined {
-        const onePoint = this.inputData?.dataseries?.[0]?.data?.[0]
-        if (!isNaN(Number(onePoint?.y))) return 'value'
-        return 'category'
-    }
-
     applyData() {
         const modifier = 1
 
@@ -313,32 +316,56 @@ export class WidgetLinechart extends LitElement {
             this.requestUpdate()
 
             const option: any = window.structuredClone(this.template)
+            option.renderItem = this.renderItem
+
             // Title
             option.title.text = label
             // option.title.textStyle.fontSize = 25 * modifier
+
+            option.tooltip.formatter = function (params: any) {
+                return params.marker + params.name + ': ' + params.value[3] + ' ms'
+            }
 
             // Axis
             option.xAxis.name = this.inputData?.axis?.xAxisLabel ?? ''
             option.dataZoom[0].show = this.inputData?.axis?.xAxisZoom ?? false
             option.toolbox.show = this.inputData?.axis?.xAxisZoom ?? false
-            // option.xAxis.axisLine.lineStyle.width = 2 * modifier
-            // option.xAxis.axisLabel.fontSize = 20 * modifier
-            option.xAxis.type = this.xAxisType()
-            option.yAxis.type = this.yAxisType()
-
-            option.yAxis.name = this.inputData?.axis?.yAxisLabel ?? ''
-            // option.yAxis.axisLine.lineStyle.width = 2 * modifier
-            // option.yAxis.axisLabel.fontSize = 20 * modifier
-            option.yAxis.scale = this.inputData?.axis?.yAxisScaling ?? false
 
             option.series = chart.series
-            // console.log('Applying data to chart', label, option)
-            if (chart.series.length <= 1) option.legend.show = false
+
+            option.legend.show = this.inputData?.axis?.showLegend ?? true
+            if (option.legend.show) {
+                const legend = this.makeLegend()
+                option.legend.data = legend.data
+                option.series.push(...legend.series)
+            }
             const oldOption: any = chart.echart?.getOption() ?? {}
             const notMerge = oldOption.series?.length !== chart.series.length
             chart.echart?.setOption(option, { notMerge })
             // chart.echart?.resize()
         })
+    }
+
+    makeLegend() {
+        const data =
+            this.inputData?.stateMap?.map((s) => ({
+                name: s.name,
+                itemStyle: {
+                    color: s.color,
+                    borderColor: this.theme?.theme_object?.timeAxis?.splitLine?.lineStyle ?? '#ccc',
+                    borderWidth: 1
+                }
+            })) ?? []
+
+        // otherwise the legend will not be rendered
+        const series =
+            this.inputData?.stateMap?.map((s) => ({
+                type: 'custom',
+                name: s.name,
+                renderItem: () => null, // no visual rendering
+                data: []
+            })) ?? []
+        return { data, series }
     }
 
     deleteCharts() {
@@ -474,7 +501,7 @@ export class WidgetLinechart extends LitElement {
                         ${this.inputData?.subTitle}
                     </p>
                 </header>
-                <div class="paging no-data" ?active=${this.canvasList.size === 0}>No Data</div>
+                <div class="paging no-data" ?adctive=${this.canvasList.size === 0}>No Data</div>
                 <div
                     class="chart-container ${this?.inputData?.axis?.columnLayout ? 'columnLayout' : ''}"
                 ></div>

@@ -9,14 +9,14 @@ const npmPackage = JSON.parse(readFileSync('./package.json'))
 export default {
     // if you use createSpaConfig, you can use your index.html as entrypoint,
     // any <script type="module"> inside will be bundled by rollup
-    input: ['./src/widget-linechart.ts'],
+    input: ['./src/widget-statehistory.ts'],
     treeshake: {
         moduleSideEffects: false
     },
     output: {
         dir: './dist',
         sourcemap: true,
-        name: 'widget-linechart-bundle',
+        name: 'widget-statehistory-bundle',
         banner: `/* @license Copyright (c) 2023 Record Evolution GmbH. All rights reserved.*/`,
         format: 'esm'
     },

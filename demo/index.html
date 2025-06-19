@@ -2,7 +2,7 @@
 <html lang="en-GB">
     <head>
         <meta charset="utf-8" />
-        <title>Linechart</title>
+        <title>State History</title>
         <style>
             html,
             body {
@@ -25,23 +25,23 @@
 
         <script type="module">
             import { html, render } from 'lit'
-            import '../dist/widget-linechart.js'
+            import '../dist/widget-statehistory.js'
             const data = await fetch('../src/default-data.json').then((res) => res.json())
             const themeObject = await fetch('themes/vintage.json').then((res) => res.json())
             const theme = { theme_name: 'vintage', theme_object: themeObject }
 
             render(
                 html`
-                    <widget-linechart-1.6.7 .theme="${theme}" .inputData=${data}>
+                    <widget-statehistory-1.0.0 .theme="${theme}" .inputData=${data}>
                         web component is not registered. Make sure to use the tag with the correct version
                         string from the package.json
-                    </widget-linechart-1.6.7>
+                    </widget-statehistory-1.0.0>
                 `,
                 document.querySelector('#demo')
             )
 
             const widget = document.getElementById('demo').children[0]
-            const keyPathsToRandomize = ['dataseries.0.data.0.y', 'title', 'dataseries.2.data.2.y']
+            const keyPathsToRandomize = ['dataseries.0.data.0.state', 'title']
 
             setInterval(() => {
                 const randomizedObj = randomizeObjectValues(data, keyPathsToRandomize)

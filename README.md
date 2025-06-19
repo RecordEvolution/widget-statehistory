@@ -1,21 +1,21 @@
-# \<widget-linechart>
+# \<widget-statehistory>
 
 This webcomponent follows the [open-wc](https://github.com/open-wc/open-wc) recommendation.
 
 ## Installation
 
 ```bash
-npm i @record-evolution/widget-linechart
+npm i @record-evolution/widget-statehistory
 ```
 
 ## Usage
 
 ```html
 <script type="module">
-    import 'widget-linechart/widget-linechart.js'
+    import 'widget-statehistory/widget-statehistory.js'
 </script>
 
-<widget-linechart-1.7.0></widget-linechart-1.7.0>
+<widget-statehistory-1.7.0></widget-statehistory-1.7.0>
 ```
 
 ## Expected data format

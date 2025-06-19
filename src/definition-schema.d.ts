@@ -7,56 +7,44 @@
 
 export type Title = string;
 export type Subtitle = string;
-export type XAxisLabel = string;
-export type YAxisLabel = string;
+export type TimeAxisLabel = string;
 /**
- * This will apply a proper time series x-Axis. Check if your x-values are timestamps.
+ * If checked, a zoom tool will be shown on the time-axis to zoom into the chart.
  */
-export type TimeseriesChart = boolean;
+export type TimeAxisZoomTool = boolean;
 /**
- * If checked, a zoom tool will be shown on the x-axis to zoom into the chart.
+ * If checked, a legend will be shown in the chart.
  */
-export type XAxisZoomTool = boolean;
+export type ShowLegend = boolean;
 /**
- * If checked, the Y-Axis will be scaled to the data range. If not checked, the Y-Axis will always start at 0.
+ * The name of the state as found in the data.
  */
-export type YAxisScaling = boolean;
-/**
- * When multiple charts are drawn, then they will be layed out horizontically or vertically.
- */
-export type VerticalLayout = boolean;
+export type StateName = string;
+export type StateMap = {
+    name?: StateName;
+    color?: Color;
+    [k: string]: unknown;
+}[];
 /**
  * The name for this data series
  */
 export type Label = string;
-export type DrawingStyle = "bar" | "line" | "scatter";
-/**
- * Check this box to turn a line chart into an area chart.
- */
-export type LineAreaFill = boolean;
-/**
- * Width of the lines in the chart.
- */
-export type LineWidth = number;
-export type LineDashStyle = "solid" | "dashed" | "dotted";
-export type SymbolStyle = "circle" | "rect" | "roundRect" | "triangle" | "diamond" | "pin" | "arrow" | "none";
-/**
- * Determines the draw order of the series. Dataseries with lower numbers are drawn on top of ones with higher numbers within one chart.
- */
-export type DrawOrder = number;
 /**
  * If two dataseries have the same 'Chart Name', they will be drawn in the same chart. Otherwise they will get their own chart. If the name contains #split# as substring then a separat chart will be drawn for each split dataseries.
  */
 export type ChartName = string;
 /**
- * If timeseries is checked in the settings, then this should be an ISO String date like 2023-11-04T22:47:52.351152+00:00. But this works with many other formats as well.
+ * For each asset the chart shows a line reflecting their state changes over time. This label is used to identify the asset in the chart.
  */
-export type XValue = string;
-export type YValue = string;
+export type AssetLabel = string;
 /**
- * Controls the symbol size for line and scatter charts.
+ * The timestamp of the state change event.
  */
-export type BubbleSize = number;
+export type EventTimestamp = string;
+/**
+ * The state the asset is in starting from the event timestamp.
+ */
+export type State = string;
 /**
  * You can specify a column in the input data to autogenerate dataseries for each distinct entry in this column. E.g. if you have a table with columns [city, timestamp, temperature] and specify 'city' as split column, then you will get a line for each city.
  */
@@ -65,19 +53,15 @@ export type SplitDataBy = string;
  * The data used to draw this data series.
  */
 export type Data = {
-    x?: XValue;
-    y?: YValue;
-    r?: BubbleSize;
+    label?: AssetLabel;
+    tsp?: EventTimestamp;
+    state?: State;
     pivot?: SplitDataBy;
     [k: string]: unknown;
 }[];
 export type Dataseries = {
     label?: Label;
-    type?: DrawingStyle;
-    backgroundColor?: FillColor;
-    borderColor?: LineColor;
-    styling?: Styling;
-    advanced?: AdvancedSettings;
+    chartName?: ChartName;
     data?: Data;
     [k: string]: unknown;
 }[];
@@ -86,36 +70,19 @@ export interface InputData {
     title?: Title;
     subTitle?: Subtitle;
     axis?: AxisSettings;
+    stateMap?: StateMap;
     dataseries?: Dataseries;
     [k: string]: unknown;
 }
 export interface AxisSettings {
-    xAxisLabel?: XAxisLabel;
-    yAxisLabel?: YAxisLabel;
-    timeseries?: TimeseriesChart;
-    xAxisZoom?: XAxisZoomTool;
-    yAxisScaling?: YAxisScaling;
-    columnLayout?: VerticalLayout;
+    xAxisLabel?: TimeAxisLabel;
+    xAxisZoom?: TimeAxisZoomTool;
+    showLegend?: ShowLegend;
     [k: string]: unknown;
 }
 /**
- * The inner color of the bars if you chose Drawing Type 'bar' or the inner colors of the points if you chose Drawing Type 'line'.
+ * The color of the state in the chart.
  */
-export interface FillColor {
-    [k: string]: unknown;
-}
-export interface LineColor {
-    [k: string]: unknown;
-}
-export interface Styling {
-    fill?: LineAreaFill;
-    borderWidth?: LineWidth;
-    borderDash?: LineDashStyle;
-    pointStyle?: SymbolStyle;
-    [k: string]: unknown;
-}
-export interface AdvancedSettings {
-    drawOrder?: DrawOrder;
-    chartName?: ChartName;
+export interface Color {
     [k: string]: unknown;
 }
