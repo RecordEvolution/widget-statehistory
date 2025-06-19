@@ -3,7 +3,7 @@
     "description": "Webcomponent widget-statehistory following open-wc recommendations",
     "license": "MIT",
     "author": "widget-statehistory",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "type": "module",
     "main": "dist/widget-statehistory.js",
     "types": "dist/src/widget-statehistory.d.ts",
