@@ -1,6 +1,4 @@
 {
-    "title": "Operations History",
-    "subTitle": "Example subtitle for state history widget.",
     "axis": {
         "xAxisLabel": "Time",
         "xAxisZoom": false,

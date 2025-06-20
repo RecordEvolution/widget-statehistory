@@ -244,7 +244,7 @@ export class WidgetStateHistory extends LitElement {
             ds.data ??= []
 
             // pivot data
-            const distincts = [...new Set(ds.data.map((d) => d.pivot))].sort()
+            const distincts = [...new Set(ds.data.map((d) => d.pivot ?? ''))].sort()
 
             distincts.forEach((piv, i) => {
                 const prefix = piv ?? ''
