@@ -257,12 +257,16 @@ export class WidgetStateHistory extends LitElement {
                     .map((d) => ({ ...d, tsp: new Date(d.tsp ?? '') }))
                     .sort((a, b) => a.tsp.getTime() - b.tsp.getTime())
 
+                const maxDateInData =
+                    data1.length > 0 ? Math.max(...data1.map((d) => d.tsp.getTime())) : new Date().getTime()
+
+                const maxDate = Math.min(new Date().getTime(), maxDateInData + 60 * 60 * 1000)
                 const data2 = data1.map((d, j) => ({
                     name: d.state,
                     value: [
                         name,
                         d.tsp,
-                        data1[j + 1]?.tsp ?? new Date(),
+                        data1[j + 1]?.tsp ?? maxDate,
                         Duration.fromMillis(
                             (data1[j + 1]?.tsp.getTime() ?? new Date().getTime()) - d.tsp.getTime()
                         ).toFormat('h:mm:ss')
@@ -315,7 +319,7 @@ export class WidgetStateHistory extends LitElement {
             chart.series.sort((a, b) => ((a.name as string) > (b.name as string) ? 1 : -1))
             this.requestUpdate()
 
-            const option: any = window.structuredClone(this.template)
+            const option: any = chart.echart?.getOption() ?? window.structuredClone(this.template)
             option.renderItem = this.renderItem
 
             // Title
@@ -339,9 +343,8 @@ export class WidgetStateHistory extends LitElement {
                 option.legend.data = legend.data
                 option.series.push(...legend.series)
             }
-            const oldOption: any = chart.echart?.getOption() ?? {}
-            const notMerge = oldOption.series?.length !== chart.series.length
-            chart.echart?.setOption(option, { notMerge })
+
+            chart.echart?.setOption(option)
             // chart.echart?.resize()
         })
     }
