@@ -42,7 +42,7 @@ export type AssetLabel = string;
  */
 export type EventTimestamp = string;
 /**
- * The state the asset is in starting from the event timestamp.
+ * The state of the asset starting from the event timestamp.
  */
 export type State = string;
 /**

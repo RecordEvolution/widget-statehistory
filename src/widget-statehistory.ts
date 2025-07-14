@@ -182,7 +182,7 @@ export class WidgetStateHistory extends LitElement {
     stateToColor(state: string): string {
         if (!this.inputData?.stateMap) return '#ccc'
         const colors = this.inputData.stateMap
-        return (colors.find((s) => s.name === state)?.color || '#ccc') as string
+        return (colors.find((s) => s.name == state)?.color || '#ccc') as string
     }
 
     update(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {

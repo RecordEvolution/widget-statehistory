@@ -110,7 +110,7 @@
                                 },
                                 "state": {
                                     "title": "State",
-                                    "description": "The state the asset is in starting from the event timestamp.",
+                                    "description": "The state of the asset starting from the event timestamp.",
                                     "type": "string",
                                     "order": 2,
                                     "required": true
