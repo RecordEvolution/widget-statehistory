@@ -207,7 +207,6 @@ export class WidgetStateHistory extends LitElement {
         this.registerTheme(this.theme)
         // Add ResizeObserver for chart container
         if (this.chartContainer) {
-            console.log('Adding ResizeObserver to chart container', this.chartContainer)
             this.resizeObserver = new ResizeObserver(() => {
                 this.canvasList.forEach((chart) => {
                     chart.echart?.resize()
@@ -327,7 +326,7 @@ export class WidgetStateHistory extends LitElement {
             // option.title.textStyle.fontSize = 25 * modifier
 
             option.tooltip.formatter = function (params: any) {
-                return params.marker + params.name + ': ' + params.value[3] + ' ms'
+                return params.marker + params.name + ': ' + params.value[3]
             }
 
             // Axis
