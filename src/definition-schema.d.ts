@@ -5,52 +5,64 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+/**
+ * The main heading displayed above the chart. Use to describe what state history is being shown (e.g., 'Machine Operating States', 'Device Connectivity History').
+ */
 export type Title = string;
+/**
+ * Secondary text displayed below the title. Use for additional context like facility name, time period, or data source.
+ */
 export type Subtitle = string;
+/**
+ * Label text displayed below the horizontal time axis. Typically 'Time', 'Date', or left empty.
+ */
 export type TimeAxisLabel = string;
 /**
- * If checked, a zoom tool will be shown on the time-axis to zoom into the chart.
+ * When enabled, shows a slider control below the chart for zooming into specific time ranges. Useful for long history periods where details need examination.
  */
 export type TimeAxisZoomTool = boolean;
 /**
- * If checked, a legend will be shown in the chart.
+ * When enabled, displays a legend showing the mapping between colors and state names. Essential for understanding the visualization.
  */
 export type ShowLegend = boolean;
 /**
- * The name of the state as found in the data.
+ * The exact state value as it appears in the data (e.g., 'RUNNING', 'STOPPED', 'IDLE', 'ERROR'). Must match the data values exactly for color mapping to work.
  */
 export type StateName = string;
+/**
+ * Array defining all possible states and their display colors. Each state that appears in the data should have a corresponding entry here for proper color coding.
+ */
 export type StateMap = {
     name?: StateName;
     color?: Color;
     [k: string]: unknown;
 }[];
 /**
- * The name for this data series
+ * Display name for this data series group. Used in legends and tooltips to identify the data source.
  */
 export type Label = string;
 /**
- * If two dataseries have the same 'Chart Name', they will be drawn in the same chart. Otherwise they will get their own chart. If the name contains #split# as substring then a separat chart will be drawn for each split dataseries.
+ * Groups data into separate timeline charts. Series with the same chartName share one chart; different names create separate charts. Use '#split#' to auto-create one chart per pivot value.
  */
 export type ChartName = string;
 /**
- * For each asset the chart shows a line reflecting their state changes over time. This label is used to identify the asset in the chart.
+ * Identifier for the entity (machine, device, asset) this event belongs to. Events with the same label form one timeline row. Different labels create separate rows.
  */
 export type AssetLabel = string;
 /**
- * The timestamp of the state change event.
+ * When this state change occurred. Use ISO 8601 format (e.g., '2023-11-04T22:47:52.351152+00:00') or Unix timestamps. Events should be in chronological order.
  */
 export type EventTimestamp = string;
 /**
- * The state of the asset starting from the event timestamp.
+ * The new state that began at this timestamp. Must match a state name defined in the State Map for proper color coding.
  */
 export type State = string;
 /**
- * You can specify a column in the input data to autogenerate dataseries for each distinct entry in this column. E.g. if you have a table with columns [city, timestamp, temperature] and specify 'city' as split column, then you will get a line for each city.
+ * Column value used to split data into multiple timeline rows automatically. Each unique pivot value creates a separate row (e.g., pivot by 'machine_id' to show one row per machine).
  */
 export type SplitDataBy = string;
 /**
- * The data used to draw this data series.
+ * Array of state change events. Each event has a timestamp and new state. The chart draws bars from each event to the next, showing how long each state lasted.
  */
 export type Data = {
     label?: AssetLabel;
@@ -59,6 +71,9 @@ export type Data = {
     pivot?: SplitDataBy;
     [k: string]: unknown;
 }[];
+/**
+ * Array of data series containing state change events. Each series can represent a group of related assets or a category of state data.
+ */
 export type Dataseries = {
     label?: Label;
     chartName?: ChartName;
@@ -66,6 +81,9 @@ export type Dataseries = {
     [k: string]: unknown;
 }[];
 
+/**
+ * A state history timeline chart widget for visualizing discrete state changes over time. Use this widget to display how entities transition between states (e.g., machine operating states, device connectivity, task status). Each row represents an entity (asset/device) and shows colored horizontal bars indicating which state it was in at any point in time. States are mapped to colors for quick visual recognition. Supports multiple data series, pivot-based auto-generation from data columns, and zoom controls for time navigation. Ideal for production monitoring, equipment uptime tracking, process state analysis, or any scenario requiring visual representation of state durations and transitions.
+ */
 export interface InputData {
     title?: Title;
     subTitle?: Subtitle;
@@ -74,6 +92,9 @@ export interface InputData {
     dataseries?: Dataseries;
     [k: string]: unknown;
 }
+/**
+ * Configuration for the time axis and legend display.
+ */
 export interface AxisSettings {
     xAxisLabel?: TimeAxisLabel;
     xAxisZoom?: TimeAxisZoomTool;
@@ -81,7 +102,7 @@ export interface AxisSettings {
     [k: string]: unknown;
 }
 /**
- * The color of the state in the chart.
+ * The color representing this state in the timeline. Use semantic colors: green for active/OK states, red for error/stopped, yellow for warning/idle, gray for unknown.
  */
 export interface Color {
     [k: string]: unknown;
