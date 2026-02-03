@@ -4,6 +4,10 @@
     "license": "MIT",
     "author": "widget-statehistory",
     "version": "1.0.11",
+    "engines": {
+        "node": ">=24.9.0",
+        "npm": ">=10.0.2"
+    },
     "type": "module",
     "main": "dist/widget-statehistory.js",
     "types": "dist/src/widget-statehistory.d.ts",
@@ -24,7 +28,7 @@
     },
     "dependencies": {
         "echarts": "5.6.0",
-        "lit": "^3.3.0",
+        "lit": "^3.3.2",
         "luxon": "^3.6.1",
         "tinycolor2": "^1.6.0"
     },
