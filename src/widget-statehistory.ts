@@ -9,7 +9,8 @@ import {
     TooltipComponent,
     GridComponent,
     DataZoomComponent,
-    LegendComponent
+    LegendComponent,
+    ToolboxComponent
 } from 'echarts/components'
 import { CustomChart } from 'echarts/charts'
 import { CanvasRenderer } from 'echarts/renderers'
@@ -226,7 +227,29 @@ export class WidgetStateHistory extends LitElement {
 
         if (!theme || !theme.theme_object || !theme.theme_name) return
 
-        echarts.registerTheme(theme.theme_name, theme.theme_object)
+        // Strip component keys for components we don't register, so ECharts
+        // doesn't merge them into the chart option as defaults.
+        const excludeKeys = [
+            'parallel',
+            'parallelAxis',
+            'geo',
+            'timeline',
+            'markPoint',
+            'markLine',
+            'markArea',
+            'brush',
+            'calendar',
+            'singleAxis',
+            'polar',
+            'radar',
+            'axisPointer',
+            'visualMap',
+            'toolbox'
+        ]
+        const filteredTheme = Object.fromEntries(
+            Object.entries(theme.theme_object).filter(([key]) => !excludeKeys.includes(key))
+        )
+        echarts.registerTheme(theme.theme_name, filteredTheme)
     }
 
     transformData() {
@@ -319,6 +342,29 @@ export class WidgetStateHistory extends LitElement {
             this.requestUpdate()
 
             const option: any = chart.echart?.getOption() ?? window.structuredClone(this.template)
+
+            // Strip component keys we don't register. ECharts' getOption() can return
+            // theme-merged defaults for these, and feeding them back into setOption
+            // triggers "Component X is used but not imported" warnings.
+            for (const key of [
+                'parallel',
+                'parallelAxis',
+                'geo',
+                'timeline',
+                'markPoint',
+                'markLine',
+                'markArea',
+                'brush',
+                'calendar',
+                'singleAxis',
+                'polar',
+                'radar',
+                'axisPointer',
+                'visualMap'
+            ]) {
+                delete option[key]
+            }
+
             option.renderItem = this.renderItem
 
             // Title
