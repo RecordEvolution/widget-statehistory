@@ -16,25 +16,25 @@
             "label": "Machine",
             "data": [
                 {
-                    "Label": "Asset 1",
+                    "label": "Asset 1",
                     "tsp": "2025-06-18T08:00:00Z",
                     "state": "Running",
                     "pivot": "Asset 1"
                 },
                 {
-                    "Label": "Asset 1",
+                    "label": "Asset 1",
                     "tsp": "2025-06-18T12:00:00Z",
                     "state": "Maintenance",
                     "pivot": "Asset 1"
                 },
                 {
-                    "Label": "Asset 1",
+                    "label": "Asset 1",
                     "tsp": "2025-06-18T12:30:00Z",
                     "state": "Off",
                     "pivot": "Asset 1"
                 },
                 {
-                    "Label": "Asset 1",
+                    "label": "Asset 1",
                     "tsp": "2025-06-18T14:00:00Z",
                     "state": "Stopped",
                     "pivot": "Asset 1"

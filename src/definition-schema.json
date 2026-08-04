@@ -1,6 +1,20 @@
 {
-    "title": "inputData",
+    "title": "State History Configuration",
     "description": "A state history timeline chart widget for visualizing discrete state changes over time. Use this widget to display how entities transition between states (e.g., machine operating states, device connectivity, task status). Each row represents an entity (asset/device) and shows colored horizontal bars indicating which state it was in at any point in time. States are mapped to colors for quick visual recognition. Supports multiple data series, pivot-based auto-generation from data columns, and zoom controls for time navigation. Ideal for production monitoring, equipment uptime tracking, process state analysis, or any scenario requiring visual representation of state durations and transitions.",
+    "aiSelection": {
+        "dataShape": "State-over-time rows: dataseries[].data[] entries of (tsp, state, label), where state is a discrete name matched against stateMap[] for its colour and label identifies the entity. Each entity becomes a row of coloured spans along a shared time axis. A pivot column can generate the entities.",
+        "useWhen": [
+            "The question is what state something was in, and for how long — machine mode, running / idle / fault, connectivity, job status.",
+            "Several assets should be compared as rows on one timeline to reveal overlaps, gaps and simultaneous stoppages.",
+            "Uptime, downtime reasons or shift patterns should be visible as durations rather than counted."
+        ],
+        "notFor": [
+            "A numeric measurement over time — use widget-linechart; this widget plots state names, not quantities.",
+            "How often each state occurred, or total time per state as a comparison — aggregate first, then use widget-linechart with dataseries[].type: 'bar', or widget-doughnut for shares of total time.",
+            "Only the current state — use widget-signal, or widget-switch when it must be controllable.",
+            "Two categorical dimensions with a numeric intensity — use widget-heatmap."
+        ]
+    },
     "type": "object",
     "properties": {
         "title": {

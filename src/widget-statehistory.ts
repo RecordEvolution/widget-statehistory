@@ -22,10 +22,15 @@ echarts.use([
     DataZoomComponent,
     CustomChart,
     CanvasRenderer,
-    LegendComponent
+    LegendComponent,
+    // The option template declares a toolbox with the zoom `restore` button and
+    // applyData() shows it whenever axis.xAxisZoom is on. Without registering
+    // the component here ECharts logs "Component toolbox is used but not
+    // imported" and drops it, so the reset button never appears.
+    ToolboxComponent
 ])
 
-import { Color, InputData } from './definition-schema'
+import { Color, StateHistoryConfiguration } from './definition-schema'
 import { CustomSeriesOption, CustomSeriesRenderItemReturn, EChartsOption, SeriesOption } from 'echarts'
 
 type Theme = {
@@ -35,7 +40,7 @@ type Theme = {
 @customElement('widget-statehistory-versionplaceholder')
 export class WidgetStateHistory extends LitElement {
     @property({ type: Object })
-    inputData?: InputData
+    inputData?: StateHistoryConfiguration
 
     @property({ type: Object })
     theme?: Theme
@@ -107,7 +112,11 @@ export class WidgetStateHistory extends LitElement {
                     type: 'slider',
                     filterMode: 'weakFilter',
                     showDataShadow: false,
-                    top: 400,
+                    // Anchored to the bottom edge. This used to be a hardcoded
+                    // `top: 400`, which placed the slider 400px down from the top
+                    // of the widget regardless of its actual height — landing in
+                    // the middle of the chart at any size other than that one.
+                    bottom: 0,
                     labelFormatter: ''
                 },
                 {
@@ -124,7 +133,12 @@ export class WidgetStateHistory extends LitElement {
             },
             xAxis: {
                 type: 'time',
-                scale: true
+                scale: true,
+                // Without these the axis name defaults to nameLocation 'end',
+                // which puts it past the right edge of the axis where the grid
+                // clips it — so the configured X-Axis Label was never visible.
+                nameLocation: 'middle',
+                nameGap: 27
             },
             yAxis: {
                 type: 'category',
@@ -243,8 +257,7 @@ export class WidgetStateHistory extends LitElement {
             'polar',
             'radar',
             'axisPointer',
-            'visualMap',
-            'toolbox'
+            'visualMap'
         ]
         const filteredTheme = Object.fromEntries(
             Object.entries(theme.theme_object).filter(([key]) => !excludeKeys.includes(key))
@@ -334,6 +347,24 @@ export class WidgetStateHistory extends LitElement {
         doomedCharts.forEach((label) => this.canvasList.delete(label))
     }
 
+    /**
+     * Assign properties onto a single-instance ECharts component.
+     *
+     * The option template holds `title`, `tooltip`, `xAxis`, `legend` and
+     * `toolbox` as plain objects, but on every update after the first the option
+     * comes from `getOption()`, which normalises each of them to a one-element
+     * array. Writing `option.xAxis.name = …` then sets a property on the Array
+     * itself and ECharts silently ignores it, so config changes (axis label,
+     * legend toggle, zoom tool) appeared to do nothing until the chart was
+     * recreated. Going through here keeps both shapes working.
+     */
+    private setComponent(option: any, key: string, props: Record<string, any>) {
+        const list = Array.isArray(option[key]) ? option[key] : [option[key] ?? {}]
+        if (!list.length) list.push({})
+        Object.assign(list[0], props)
+        option[key] = list
+    }
+
     applyData() {
         const modifier = 1
 
@@ -367,25 +398,45 @@ export class WidgetStateHistory extends LitElement {
 
             option.renderItem = this.renderItem
 
+            const showLegend = this.inputData?.axis?.showLegend ?? true
+            const showZoom = this.inputData?.axis?.xAxisZoom ?? false
+
             // Title
-            option.title.text = label
-            // option.title.textStyle.fontSize = 25 * modifier
+            this.setComponent(option, 'title', { text: label })
 
-            option.tooltip.formatter = function (params: any) {
-                return params.marker + params.name + ': ' + params.value[3]
-            }
+            this.setComponent(option, 'tooltip', {
+                formatter: (params: any) => params.marker + params.name + ': ' + params.value[3]
+            })
 
-            // Axis
-            option.xAxis.name = this.inputData?.axis?.xAxisLabel ?? ''
-            option.dataZoom[0].show = this.inputData?.axis?.xAxisZoom ?? false
-            option.toolbox.show = this.inputData?.axis?.xAxisZoom ?? false
+            // Axis. nameLocation/nameGap are re-applied here because on the merge
+            // path the option comes from getOption(), which may carry ECharts'
+            // own defaults rather than the template's.
+            const xAxisLabel = this.inputData?.axis?.xAxisLabel ?? ''
+            this.setComponent(option, 'xAxis', {
+                name: xAxisLabel,
+                nameLocation: 'middle',
+                nameGap: 27
+            })
+            this.setComponent(option, 'dataZoom', { show: showZoom, bottom: 0, top: undefined })
+            this.setComponent(option, 'toolbox', { show: showZoom })
+
+            // Neither the axis name nor the zoom slider is accounted for by the
+            // grid's `containLabel`, so both need their room reserved explicitly
+            // or they are drawn over the state bars.
+            const ZOOM_THICKNESS = 40
+            this.setComponent(option, 'grid', {
+                bottom: (xAxisLabel ? 30 : 10) + (showZoom ? ZOOM_THICKNESS : 0)
+            })
 
             option.series = chart.series
 
-            option.legend.show = this.inputData?.axis?.showLegend ?? true
-            if (option.legend.show) {
+            // The legend and the zoom toolbox both sit in the top-right corner,
+            // so the legend has to step aside for the restore button when the
+            // zoom tool is on, or the icon is drawn over the last legend item.
+            this.setComponent(option, 'legend', { show: showLegend, right: showZoom ? 45 : 0 })
+            if (showLegend) {
                 const legend = this.makeLegend()
-                option.legend.data = legend.data
+                this.setComponent(option, 'legend', { data: legend.data })
                 option.series.push(...legend.series)
             }
 

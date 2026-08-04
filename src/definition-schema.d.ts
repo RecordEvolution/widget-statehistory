@@ -84,7 +84,7 @@ export type Dataseries = {
 /**
  * A state history timeline chart widget for visualizing discrete state changes over time. Use this widget to display how entities transition between states (e.g., machine operating states, device connectivity, task status). Each row represents an entity (asset/device) and shows colored horizontal bars indicating which state it was in at any point in time. States are mapped to colors for quick visual recognition. Supports multiple data series, pivot-based auto-generation from data columns, and zoom controls for time navigation. Ideal for production monitoring, equipment uptime tracking, process state analysis, or any scenario requiring visual representation of state durations and transitions.
  */
-export interface InputData {
+export interface StateHistoryConfiguration {
     title?: Title;
     subTitle?: Subtitle;
     axis?: AxisSettings;
