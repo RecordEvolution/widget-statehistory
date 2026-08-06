@@ -372,29 +372,17 @@ export class WidgetStateHistory extends LitElement {
             chart.series.sort((a, b) => ((a.name as string) > (b.name as string) ? 1 : -1))
             this.requestUpdate()
 
-            const option: any = chart.echart?.getOption() ?? window.structuredClone(this.template)
-
-            // Strip component keys we don't register. ECharts' getOption() can return
-            // theme-merged defaults for these, and feeding them back into setOption
-            // triggers "Component X is used but not imported" warnings.
-            for (const key of [
-                'parallel',
-                'parallelAxis',
-                'geo',
-                'timeline',
-                'markPoint',
-                'markLine',
-                'markArea',
-                'brush',
-                'calendar',
-                'singleAxis',
-                'polar',
-                'radar',
-                'axisPointer',
-                'visualMap'
-            ]) {
-                delete option[key]
-            }
+            // Always build the option from the template — never from getOption().
+            // Reading the rendered option back and handing it to setOption
+            // deep-clones the whole stored option on every frame, and it returns
+            // every component normalized to an array — which is why setComponent()
+            // below has to accept both shapes, and why any plain `{ ...option.x }`
+            // here would spread an array into `{ '0': x }` and have ECharts merge it
+            // back one level deeper each update until zrender's recursive merge()
+            // overflowed the stack. Starting from the template also drops the need to
+            // strip theme-merged defaults for components we never register — the
+            // template only names components registered in echarts.use above.
+            const option: any = window.structuredClone(this.template)
 
             option.renderItem = this.renderItem
 
