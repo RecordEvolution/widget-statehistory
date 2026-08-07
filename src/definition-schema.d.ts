@@ -18,7 +18,7 @@ export type Subtitle = string;
  */
 export type TimeAxisLabel = string;
 /**
- * When enabled, shows a slider control below the chart for zooming into specific time ranges. Useful for long history periods where details need examination.
+ * When enabled, shows a slider control below the chart for zooming into specific time ranges. Leave this DISABLED (the default) unless the user explicitly asks for a zoom, pan, or time-range slider: the slider costs vertical chart space, and dashboards usually already control the visible time range through their data query or a filter widget. Do not enable it just because the history period is long.
  */
 export type TimeAxisZoomTool = boolean;
 /**
