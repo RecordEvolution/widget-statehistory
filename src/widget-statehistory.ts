@@ -416,7 +416,12 @@ export class WidgetStateHistory extends LitElement {
                 bottom: (xAxisLabel ? 30 : 10) + (showZoom ? ZOOM_THICKNESS : 0)
             })
 
-            option.series = chart.series
+            // A copy, not `chart.series` itself: the legend block below appends
+            // empty placeholder series, and pushing those onto the chart record
+            // would leave them in `chart.series` for the rest of the cycle —
+            // where the sort above and every `chart.series` reader would count
+            // them as real data series.
+            option.series = [...chart.series]
 
             // The legend and the zoom toolbox both sit in the top-right corner,
             // so the legend has to step aside for the restore button when the
