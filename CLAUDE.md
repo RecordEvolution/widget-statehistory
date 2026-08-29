@@ -50,7 +50,7 @@ Vite library mode (`build.lib`, ES format, fileName `widget-statehistory`) emits
 
 ### Release flow (from README)
 
-1. Tag push triggers the workflow which runs `npm install --omit-dev --frozen-lockfile`, builds, and publishes.
+1. Tag push triggers the workflow which runs `npm ci`, builds, and publishes via npm trusted publishing (OIDC — no `NPM_TOKEN`).
 2. After publish, register the new version with the platform via SQL:
    ```sql
    select swarm.f_update_widget_master('{"package_name": "widget-statehistory", "version": "X.Y.Z"}'::jsonb);
