@@ -64,7 +64,7 @@ npm run types
 npm run release
 ```
 
-Note that `npm run release` automatically increases the path version number. If you want a minor update, then either adjuste the version in the package.json manually or use `minor` instead of `patch` in the `npm run release` command.
+Note that `npm run release` bumps the patch version. For a minor or major bump use `npm run release:minor` or `npm run release:major` — do not hand-edit the version in `package.json`, since the release preflight requires a clean working tree.
 
 After the version tag has been successfully published to github, our github action kicks in and creates a release on github and publishes the release on npm as well.
 
