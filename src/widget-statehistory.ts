@@ -69,6 +69,16 @@ export class WidgetStateHistory extends LitElement {
         this.renderItem = this.renderItem.bind(this)
 
         this.template = {
+            // ECharts paints the registered theme's own canvas `backgroundColor`
+            // (chalk = `rgba(41,52,65,1)`) as an opaque slab over the wrapper's
+            // background, so the tile shows the theme colour behind the chart and
+            // the host's `--re-tile-background-color` everywhere else. Keeping the
+            // canvas transparent lets the wrapper show through; it already falls
+            // back to the theme's colour when nothing overrides it, so no theme
+            // loses its background. Set here rather than filtered out of
+            // registerTheme() — theme registration is global by name, so another
+            // widget on the page can re-register the same theme with it.
+            backgroundColor: 'transparent',
             tooltip: {},
             title: {
                 text: 'Profile',
