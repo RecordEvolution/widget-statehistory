@@ -33,6 +33,9 @@ The widget receives two reactive Lit `@property` objects from the host dashboard
 - `inputData: StateHistoryConfiguration` — typed via `src/definition-schema.d.ts`, generated from `src/definition-schema.json`. The JSON schema is the authoritative contract used by the IronFlock dashboard editor to render the widget's configuration UI; descriptions in it are intentionally written for AI agents and end users (see commit `f2e58ea`). Edit the JSON, then run `npm run types`.
 - `theme: { theme_name, theme_object }` — light/dark theme objects (see `demo/themes/`).
 
+Theming: `registerTheme()` resolves colours as a `var(--re-text-color, <theme value>)` / `var(--re-tile-background-color, <theme value>)` chain rather than reading the host's custom properties through `getComputedStyle`. The host property still wins over `theme_object`, but nothing is snapshotted, so a board style edit repaints the tile live.
+
+
 `src/default-data.json` provides the demo payload.
 
 ### Rendering
