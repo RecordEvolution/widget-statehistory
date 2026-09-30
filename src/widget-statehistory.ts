@@ -102,12 +102,21 @@ export class WidgetStateHistory extends LitElement {
                 textStyle: {
                     fontSize: 12
                 },
-                top: 'top',
-                right: 0,
+                // Always a single row: overflowing items page instead of
+                // wrapping, so the legend has a fixed height that applyData()
+                // can reserve above the plot. A wrapping legend grew downward
+                // over the title and the state bars on narrow tiles.
+                type: 'scroll',
+                orient: 'horizontal',
+                left: 'center',
+                top: 0, // set per build in applyData()
                 selectedMode: false
             },
             toolbox: {
                 show: true,
+                // Match the legend's padding so the button lines up with the
+                // legend row it shares (ECharts 6 defaults this to 15).
+                padding: 5,
                 feature: {
                     // dataZoom: {
                     //     yAxisIndex: 'none'
@@ -239,6 +248,21 @@ export class WidgetStateHistory extends LitElement {
             })
             this.resizeObserver.observe(this.chartContainer)
         }
+    }
+
+    /**
+     * Resolved text colour for the chart canvas.
+     *
+     * The themeTitleColor field holds a var() chain, which the browser resolves
+     * for CSS but ECharts cannot — it paints to a canvas and needs a real
+     * colour. Read at the point of use rather than cached, so a board style
+     * edit reaches the next chart update instead of waiting for a theme change.
+     */
+    private resolvedTextColor(): string | undefined {
+        return (
+            getComputedStyle(this).getPropertyValue('--re-text-color').trim() ||
+            this.theme?.theme_object?.title?.textStyle?.color
+        )
     }
 
     registerTheme(theme?: Theme) {
@@ -419,7 +443,15 @@ export class WidgetStateHistory extends LitElement {
             // grid's `containLabel`, so both need their room reserved explicitly
             // or they are drawn over the state bars.
             const ZOOM_THICKNESS = 40
+            // The top edge is a stack of rows, each with a fixed height: the
+            // chart title, then the legend (a one-row scroll legend, see the
+            // template). The title is the chart name, which is empty unless the
+            // series set chartName, so only a non-empty one takes a row.
+            const TITLE_ROW = 30
+            const LEGEND_ROW = 24
+            const legendTop = label ? TITLE_ROW : 0
             this.setComponent(option, 'grid', {
+                top: legendTop + (showLegend ? LEGEND_ROW : 0) + 10,
                 bottom: (xAxisLabel ? 30 : 10) + (showZoom ? ZOOM_THICKNESS : 0)
             })
 
@@ -430,10 +462,27 @@ export class WidgetStateHistory extends LitElement {
             // them as real data series.
             option.series = [...chart.series]
 
-            // The legend and the zoom toolbox both sit in the top-right corner,
-            // so the legend has to step aside for the restore button when the
-            // zoom tool is on, or the icon is drawn over the last legend item.
-            this.setComponent(option, 'legend', { show: showLegend, right: showZoom ? 45 : 0 })
+            // The zoom-reset button shares the legend row at its right end, so
+            // the legend (and its pager) is narrowed to stay clear of it. Both
+            // widths are written because this is a merge update: a width left
+            // out would keep the previous build's value.
+            this.setComponent(option, 'toolbox', { top: legendTop, right: 0 })
+            this.setComponent(option, 'legend', {
+                show: showLegend,
+                top: legendTop,
+                width: showZoom ? '80%' : 'auto'
+            })
+            // The theme's legend colours were picked for its own background and
+            // vanish when the host overrides the tile colours; the pager's
+            // defaults (#333 text, dark icons) vanish on any dark tile.
+            const textColor = this.resolvedTextColor()
+            if (textColor) {
+                this.setComponent(option, 'legend', {
+                    textStyle: { fontSize: 12, color: textColor },
+                    pageTextStyle: { color: textColor },
+                    pageIconColor: textColor
+                })
+            }
             if (showLegend) {
                 const legend = this.makeLegend()
                 this.setComponent(option, 'legend', { data: legend.data })
