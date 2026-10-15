@@ -304,27 +304,28 @@ export class WidgetStateHistory extends LitElement {
             this.chartsStale = true
             return
         }
-        if (!this?.inputData?.dataseries?.length) return
+        // A missing or emptied list still runs the passes below, so the old charts are
+        // disposed and No Data shows instead of the last values. Null slots are skipped.
+        const list = this.inputData?.dataseries
+        const dataseries = (Array.isArray(list) ? list : []).filter((ds) => ds && typeof ds === 'object')
 
         // reset all existing chart dataseries
         this.canvasList.forEach((chartM) => {
             chartM.series = []
             chartM.doomed = true
         })
-        this.inputData.dataseries.forEach((ds, l) => {
-            ds.chartName ??= ''
-
-            ds.data ??= []
+        dataseries.forEach((ds) => {
+            // The config belongs to the host: defaults are read, never written into it.
+            const dsData = ds.data ?? []
 
             // pivot data
-            const distincts = [...new Set(ds.data.map((d) => d.pivot ?? ''))].sort()
+            const distincts = [...new Set(dsData.map((d) => d.pivot ?? ''))].sort()
 
             distincts.forEach((piv, i) => {
                 const prefix = piv ?? ''
                 const label = ds.label ?? ''
                 const name = prefix + (!!prefix && !!label ? ' - ' : '') + label
-                const data =
-                    (distincts.length === 1 ? ds.data : ds.data?.filter((d) => d.pivot === piv)) ?? []
+                const data = distincts.length === 1 ? dsData : dsData.filter((d) => d.pivot === piv)
 
                 const data1 = data
                     .map((d) => ({ ...d, tsp: new Date(d.tsp ?? '') }))
