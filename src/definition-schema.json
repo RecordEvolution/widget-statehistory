@@ -10,7 +10,7 @@
         ],
         "notFor": [
             "A numeric measurement over time — use widget-linechart; this widget plots state names, not quantities.",
-            "How often each state occurred, or total time per state as a comparison — aggregate first, then use widget-linechart with dataseries[].type: 'bar', or widget-doughnut for shares of total time.",
+            "How often each state occurred, or total time per state as a comparison — aggregate first, then use widget-linechart with dataseries[].type: 'bar' (one row per state, the state on the x axis), or widget-doughnut for shares of total time once the per-state totals are columns of one row (a fixed set of states, one slice each).",
             "Only the current state — use widget-signal, or widget-switch when it must be controllable.",
             "Two categorical dimensions with a numeric intensity — use widget-heatmap."
         ]
