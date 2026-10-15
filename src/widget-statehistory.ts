@@ -676,7 +676,7 @@ export class WidgetStateHistory extends LitElement {
                         ${this.inputData?.subTitle}
                     </p>
                 </header>
-                <div class="paging no-data" ?adctive=${this.canvasList.size === 0}>No Data</div>
+                <div class="paging no-data" ?active=${this.canvasList.size === 0}>No Data</div>
                 <div
                     class="chart-container ${this?.inputData?.axis?.columnLayout ? 'columnLayout' : ''}"
                 ></div>
